@@ -5,7 +5,7 @@ var express = require('express')
 var session = require('express-session')
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser');
-var engine = require('./engine')
+
 
 var app = express()
 var server = http.createServer(app)
@@ -57,17 +57,17 @@ app.get('/createRoom', (req, res) =>
 {
 	console.log('Created room: ' + req.query.name)
 
-	rooms.push({'name': req.query.name, 'players': [], 'board': board})
+	rooms.push({'name': req.query.name, 'players': [], 'board': []})
 	res.redirect('/rooms/' + (rooms.length - 1))
 })
 
 app.get('/rooms/:id', (req, res) =>
 {
 	var id = req.params.id
-	if (rooms[id].players.length >= 2)
+	if (rooms[id].players.length >= 6)
 		res.redirect('/roomsList')
 	else
-		res.render('board', {'name': rooms[id].name, 'roomNo': id, 'username': req.cookies.username})
+		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.cookies.username})
 })
 
 io.on('connection', function(socket)
@@ -262,10 +262,12 @@ function drawnPiece(piece, x, y, rotation) {
 	this.rotation = rotation
 }
 
-function createPlayer(id) {
+function createPlayer(id, socket, roomNo) {
 	this.id = id
-	this.color = colors[players.length]
-	this.pieces = 8
+	this.socket = socket
+	this.first = false
+	this.color = colors[rooms[roomNo].players.length]
+	this.pieces = 7
 }
 
 function checkAssign(piece, x, y) {

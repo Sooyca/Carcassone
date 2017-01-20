@@ -1,3 +1,5 @@
+
+
 function drawPiece(piece, x, y) {
 	ctx = gameArea.context
 	if(piece.rotation == 0)
@@ -22,7 +24,7 @@ function startGame() {
 		// wyślij sygnał: getClick(e)
 	})
 }
-   	
+
 var gameArea = {
 	canvas : document.getElementById("myCanvas"), 		// w html będzie myCanvas
 	start : function() {
@@ -35,4 +37,19 @@ var gameArea = {
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 }
-	
+
+function mousePos(evt)
+{
+	var rect = canvas.getBoundingClientRect()
+	return {
+	  x: evt.clientX - rect.left,
+	  y: evt.clientY - rect.top
+	}
+}
+
+var socket = io()
+
+window.addEventListener('mousedown', function(e)
+{
+	socket.emit('click', mousePos(e))
+})
