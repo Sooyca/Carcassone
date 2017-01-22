@@ -133,7 +133,8 @@ io.on('connection', function(socket)
 })
 
 
-
+server.listen( process.env.PORT || 5000)
+console.log('server started')
 
 
 
@@ -415,21 +416,3 @@ function addPiece(piece, x, y, rotation) {
 	}
 	return true
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-server.listen( process.env.PORT || 5000)
-console.log('server started')
