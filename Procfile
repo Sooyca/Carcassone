@@ -1,1 +1,1 @@
-web: node serverlauncher.js
+web: node game.js
