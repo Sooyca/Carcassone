@@ -14,7 +14,6 @@ var cnt = 0
 var rooms = []
 var users = {}
 
-console.log(engine.startPiece);
 
 app.set('view engine', 'ejs')
 app.set('views', './')
@@ -134,29 +133,6 @@ io.on('connection', function(socket)
 })
 
 
-server.listen( process.env.PORT || 5000)
-console.log('server started')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -232,6 +208,7 @@ function getClick(e) {
 				currY = Math.floor(yCoo)
 				addPiece(randPiece, currX, currY, currRotation)
 			}
+		}
 }
 
 function boardToCanvas(x) {
@@ -438,3 +415,21 @@ function addPiece(piece, x, y, rotation) {
 	}
 	return true
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+server.listen( process.env.PORT || 5000)
+console.log('server started')
