@@ -1,13 +1,7 @@
-
-
-function drawPiece(piece, x, y) {
-	ctx = gameArea.context
-	if(piece.rotation == 0)
-		ctx.drawImage(piece.img, x, y, gridSize, gridSize)
-	else {
-	// obrócić canvas!
-	}
-}
+var canvasSize = 1000
+var boardSize = 10
+var gridSize = canvasSize/boardSize
+var manSize = gridSize/4
 
 function drawMan(color, x, y) {
 	var img = new Image
@@ -18,27 +12,44 @@ function drawMan(color, x, y) {
 
 // w hmtl:
 
-function startGame() {
-	gameArea.start()
-  	window.addEventListener('click', function (e) {
-		// wyślij sygnał: getClick(e)
-	})
-}
-
-var gameArea = {
-	canvas : document.getElementById("myCanvas"), 		// w html będzie myCanvas
-	start : function() {
-		this.canvas.width = canvasSize;
-		this.canvas.height = canvasSize;
-		this.context = this.canvas.getContext("2d");
-		currPlayer = players[0]
-	},
-	clear : function() {
+   	
+function createGameArea()
+{
+	this.canvas = document.getElementById("myCanvas")		// w html będzie myCanvas
+	this.context = this.canvas.getContext("2d")
+	this.clear = function() 
+	{
 		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+	this.newGame = function() 
+	{
+		//currPlayer = players[0]
+		this.clear()
 	}
 }
 
-function mousePos(evt)
+var gameArea, id
+var socket = io()
+document.addEventListener("DOMContentLoaded", function() 
+{
+	gameArea = new createGameArea()
+	var rect = gameArea.canvas.getBoundingClientRect()
+	socket.emit('join', {
+		'roomNo': roomNo, 
+		'canvas': {
+			'x': rect.left,
+			'y': rect.top,
+			'size': gameArea.canvas.width,
+			}
+		})
+})
+
+function newGame()
+{
+	socket.emit('newgame')
+}
+
+function getMousePos(evt) 
 {
 	var rect = canvas.getBoundingClientRect()
 	return {
@@ -47,9 +58,45 @@ function mousePos(evt)
 	}
 }
 
-var socket = io()
 
-window.addEventListener('mousedown', function(e)
+socket.on('id', function(data)
 {
-	socket.emit('click', mousePos(e))
+	id = data
+	if (id == 0)
+		document.getElementById("button").style = 'display:initial;'
 })
+
+socket.on('newgame', function()
+{
+	gameArea.newGame()
+	/*
+  	window.addEventListener('click', function (e) {
+		// wyślij sygnał: getClick(e)
+	})
+	*/
+})
+
+window.addEventListener('click', function(e)
+{
+	console.log(e)
+	socket.emit('click', {'clientX': e.clientX, 'clientY': e.clientY})
+})
+
+socket.on('drawPiece', function(data) {
+	var x = data.pos.x, y = data.pos.y
+	ctx = gameArea.context
+	var img = new Image()
+	img.src = data.piece.img
+	console.log(data.piece)
+	//if(data.piece.rotation == 0)
+	{
+		ctx.drawImage(img, x, y, gridSize, gridSize)
+		//ctx.drawImage(img, x, y)
+		console.log(data.piece.rotation)
+	}
+	//else 
+	{
+	// obrócić canvas!
+	}
+})
+

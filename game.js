@@ -12,9 +12,11 @@ var server = http.createServer(app)
 var io = socket(server)
 var cnt = 0
 var rooms = []
-var users = {}
+var roomNumber = {}
 
-console.log(engine.startPiece);
+var emptyBoard = [[-1, -1, -1],
+				 [-1, -1, -1],
+				 [-1, -1, -1]]
 
 app.set('view engine', 'ejs')
 app.set('views', './')
@@ -23,8 +25,8 @@ app.use( cookieParser() )
 app.use(express.static('./'))
 app.use(session(
 {
-	secret: 'dfgfsgfsgsf',
-	resave: false,
+	secret: 'dfgfsgfsgsf', 
+	resave: false, 
 	saveUninitialized: true
 }))
 
@@ -56,39 +58,106 @@ app.get('/changeUsername', (req, res) =>
 app.get('/createRoom', (req, res) =>
 {
 	console.log('Created room: ' + req.query.name)
-
-	rooms.push({'name': req.query.name, 'players': [], 'board': []})
+	var board = [[-1, -1, -1],
+				 [-1, -1, -1],
+				 [-1, -1, -1]]
+	rooms.push({
+		'name': req.query.name, 
+		'players': {}, 
+		'playersCnt': 0,
+		'board': [], 
+		'turn': 0,
+		'segments' : [{'type' : field}],
+		'currPiece': startPiece,
+		'currX': 0,
+		'currY': 0
+	})
 	res.redirect('/rooms/' + (rooms.length - 1))
 })
 
-app.get('/rooms/:id', (req, res) =>
+app.get('/rooms/:id', (req, res) => 
 {
 	var id = req.params.id
-	if (rooms[id].players.length >= 6)
+	if (rooms[id].playersCnt >= 6)
 		res.redirect('/roomsList')
 	else
-		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.cookies.username})
+		res.render('room', {'name': rooms[id].name, 'roomNo': id, 'username': req.cookies.username})
 })
 
-io.on('connection', function(socket)
+io.on('connection', function(socket) 
 {
     console.log('Client connected: ' + socket.id)
-    /*
-    socket.emit('id', cnt++)
-    if (cnt == 2)
-    {
-    	io.emit('start', {'id': Math.floor(2*Math.random())})
-    }
-    */
+
+	socket.on('join', function(data)
+	{
+		var id = rooms[data.roomNo].playersCnt
+		socket.emit('id', id)
+		console.log(data)
+		rooms[data.roomNo].players[socket.id] = {
+			'socket': socket, 
+			'color': colors[id], 
+			'pieces': 8, 
+			'roomNo': data.roomNo, 
+			'id': id, 
+			'mayAddMan': false,
+			'canvas': data.canvas,
+			'points': 0
+		}
+		rooms[data.roomNo].playersCnt++
+		roomNumber[socket.id] = data.roomNo
+		
+	})
+	
     socket.on('newgame', function()
     {
-    	var roomNo = users[socket.id]
-
-    	//console.log(emptyBoard)
-    	for (var i = 0; i < rooms[roomNo].players.length; i++)
-    		rooms[roomNo].players[i].emit('newgame')
-    	//io.emit('newgame')
+    	var roomNo = roomNumber[socket.id]
+    	rooms[roomNo].board = []
+    	for (var i in rooms[roomNo].players)
+    		rooms[roomNo].players[i].socket.emit('newgame')
     })
+    
+    socket.on('click', function(e) 
+    {
+    	console.log(e)
+    	var roomNo = roomNumber[socket.id]
+    	var room = rooms[roomNo]
+    	var player = room.players[socket.id]
+    	//player.socket.emit('drawPiece', {'piece': startPiece, 'pos': {'x': 500, 'y': 500}})
+    	var myTurn = (room.turn == room.players[socket.id].id)
+    	var mayAddMan = player.mayAddMan
+		if(e.button == 2 && myTurn)
+			endTurn(room)
+		else if(myTurn) 
+		{
+			//var xCoo = canvasToBoard(e.clientX, player.canvas)
+			//var yCoo = canvasToBoard(e.clientY, player.canvas)
+			var coo = canvasToBoard(e, player.canvas)
+			if(mayAddMan) 
+			{
+				if(Math.abs(coo.y - room.currY) < Math.abs(coo.x - room.currX)) 
+				{
+					if(room.currX <= coo.x && room.currX + 0.5 > coo.x) // lewa
+						addOwner(room.currPiece[west], boardToCanvas(room.currX + 0.25, room.currY + 0.5, player.canvas), player)
+					else if (room.currX + 1 <= coo.x && room.currX + 0.5 < coo.x) //prawa
+						addOwner(room.currPiece[east], boardToCanvas(room.currX + 0.75, room.currY + 0.5, player.canvas), player)
+				}
+				else if(Math.abs(coo.y - room.currX) < Math.abs(coo.y - room.currY)) 
+				{
+					if(room.currY <= coo.y && room.currY + 0.5 > coo.y) // góra
+						addOwner(room.currPiece[north], boardToCanvas(room.currX + 0.5, room.currY + 0.25, player.canvas), player)
+					else if (room.currY + 1 <= coo.y && room.currY + 0.5 < coo.y) //dół
+						addOwner(room.currPiece[south], boardToCanvas(room.currX + 0.5, room.currY + 0.75, player.canvas), player)  
+				}
+			}
+			else 
+			{
+				room.currX = Math.floor(coo.x)
+				room.currY = Math.floor(coo.y)
+				addPiece(randPiece, room.currX, room.currY, currRotation, room, player)
+			}
+		}
+	})
+    /*
     socket.on('move', function(data)
     {
     	var roomNo = users[socket.id]
@@ -98,13 +167,6 @@ io.on('connection', function(socket)
     		rooms[roomNo].players[i].emit('move', {'board': rooms[roomNo].board, 'id': data.id})
     	//io.emit('move', {'id': data.id, 'x': data.x, 'y': data.y})
     })
-	socket.on('join', function(roomNo)
-	{
-		socket.emit('id', rooms[roomNo].players.length)
-		rooms[roomNo].players.push(socket)
-		users[socket.id] = roomNo
-
-	})
 	socket.on('disconnect', function()
 	{
 		console.log('Client disconnected: ' + socket.id)
@@ -131,31 +193,12 @@ io.on('connection', function(socket)
 		}
 		delete users.socket
 	})
+	*/
 })
 
 
-server.listen( process.env.PORT || 5000)
-console.log('server started')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+server.listen(3000)
+console.log('ok')
 
 
 
@@ -166,16 +209,15 @@ var canvasSize = 1000
 var boardSize = 10
 var gridSize = canvasSize/boardSize
 var manSize = gridSize/4
-var board = []
-var players = []
+var pieceImageSize = 93
+//var board = []
+//var players = []
 var colors = ["red", "blue", "yellow", "green", "black", "white"]
 
 
 var town = 2
 var road = 1
 var field = 0
-
-var segments = [{type : field}]
 
 var north = 0, east = 1, south = 2, west = 3
 
@@ -197,49 +239,35 @@ var roadStraight = new createSubPiece(road, [2])
 
 var fieldAlone = new createSubPiece(field, [])
 
-var currPiece, currX, currY, currRotation, randPiece, currPlayer
-var mayAddMan = false
-var myTurn = true
+//var currPiece, currX, currY, currPlayer 
+var currRotation, randPiece
 currRotation = 0
 
 
-var startPiece = new createPiece(townAlone, roadStraight, fieldAlone, roadStraight, "start.jpg")
-//randPiece = startPiece
+var startPiece = new createPiece(townAlone, roadStraight, fieldAlone, roadStraight, "../start.jpg")
+randPiece = startPiece
 
-function getClick(e) {
-	if(e.button == 2 && myTurn)
-		endTurn()
-	else
-		if(myTurn) {
-			var xCoo = canvasToBoard(e.clientX)
-			var yCoo = canvasToBoard(e.clientY)
-			if(mayAddMan) {
-				if(Math.abs(yCoo - currY) < Math.abs(xCoo - currX)) {
-					if(currX <= xCoo && currX + 0.5 > xCoo) // lewa
-						addOwner(currPiece, boardToCanvas(currX + 0.25), boardToCanvas(currY + 0.5))
-					else if (currX + 1 <= xCoo && currX + 0.5 < xCoo) //prawa
-						addOwner(currPiece, boardToCanvas(currX + 0.75), boardToCanvas(currY + 0.5))
-				}
-				else if(Math.abs(xCoo - currX) < Math.abs(yCoo - currY)) {
-					if(currY <= yCoo && currY + 0.5 > yCoo) // góra
-						addOwner(currPiece, boardToCanvas(currX + 0.5), boardToCanvas(currY + 0.25))
-					else if (currY + 1 <= yCoo && currY + 0.5 < yCoo) //dół
-						addOwner(currPiece, boardToCanvas(currX + 0.5), boardToCanvas(currY + 0.75))
-				}
-			}
-			else {
-				currX = Math.floor(xCoo)
-				currY = Math.floor(yCoo)
-				addPiece(randPiece, currX, currY, currRotation)
-			}
+function getMousePos(evt, canvas) 
+{
+	return {
+	  'x': evt.clientX - canvas.x,
+	  'y': evt.clientY - canvas.y
+	}
 }
 
-function boardToCanvas(x) {
-	return canvasSize*x/boardSize
+function boardToCanvas(x, y, canvas) {
+	return {
+		'x': canvas.size*x/boardSize + canvas.x,
+		'y': canvas.size*y/boardSize + canvas.y
+	}
 }
 
-function canvasToBoard(x) {
-	return boardSize*x/canvasSize
+function canvasToBoard(evt, canvas) {
+	var pos = getMousePos(evt, canvas)
+	return {
+		'x': boardSize*pos.x/canvas.size,
+		'y': boardSize*pos.y/canvas.size
+	}
 }
 
 function createSubPiece(type, connections) {
@@ -257,20 +285,19 @@ function drawnPiece(piece, x, y, rotation) {
 	this[south] = { piece : piece.subPieces[(2 + rotation)%4] }
 	this[east] = { piece : piece.subPieces[(1 + rotation)%4] }
 	this[west] = { piece : piece.subPieces[(3 + rotation)%4] }
-	this.img = new Image
-	this.img.src = piece.img
+	//this.img = new Image(pieceImageSize, pieceImageSize)
+	//this.img.src = piece.img
+	this.img = piece.img
 	this.rotation = rotation
 }
 
-function createPlayer(id, socket, roomNo) {
+function createPlayer(id) {
 	this.id = id
-	this.socket = socket
-	this.first = false
-	this.color = colors[rooms[roomNo].players.length]
-	this.pieces = 7
+	this.color = colors[players.length]
+	this.pieces = 8
 }
 
-function checkAssign(piece, x, y) {
+function checkAssign(piece, x, y, room) {
 
 	for(var i=0; i<4; i++) {
 		if(piece[i].piece.type == field)
@@ -279,51 +306,52 @@ function checkAssign(piece, x, y) {
 			if(piece[i].neighbour) {
 				var a = piece[i].neighbour.assign
 				if(piece[i].assign)
-					mergeSegments(a, piece[i].assign)
+					mergeSegments(a, piece[i].assign, room)
 				else {
 					piece[i].assign = a
-					if(segments[a].parts.indexOf(y*boardSize + x) == -1) {
+					if(room.segments[a].parts.indexOf(y*boardSize + x) == -1) {
 						console.log(`dopisuje klocek do ${a}`)
-						segments[a].parts.push(y*boardSize + x)
-						console.log(segments[a])
+						room.segments[a].parts.push(y*boardSize + x)
+						console.log(room.segments[a])
 					}
-				}
+				}		
 			}
 			for(var a of piece[i].piece.connections) {
 				var j = (i+a)%4
 				console.log(`jestem ${piece[i].piece.type} i mam polaczenie z ${piece[j].piece.type}`)
 				if(piece[i].assign) {
 					if(piece[j].assign && piece[j].assign != piece[i].assign)
-						mergeSegments(piece[i].assign, piece[j].assign)
+						mergeSegments(piece[i].assign, piece[j].assign, room)
 				}
 				else piece[i].assign = piece[j].assign
 			}
 			if(!piece[i].assign) {
-				segments.push({parts : [y*boardSize + x], type : piece[i].piece.type})
-				piece[i].assign = segments.length-1
+				room.segments.push({parts : [y*boardSize + x], type : piece[i].piece.type})
+				piece[i].assign = room.segments.length-1
 			}
 		}
-	}
+	}	
 }
 
-function addOwner(subPiece, x, y) {
+function addOwner(subPiece, pos, player) {
+	var x = pos.x, y = pos.y
 	if(subPiece.assign.owners) {
 		// wyślij sygnał: napisz, że nie można
 	}
 	else {
-		subPiece.assign.owners = [currPlayer]
-		mayAddMan = false
+		subPiece.assign.owners = [player]
+		player.mayAddMan = false
 		console.log(`rysuje ludka na ${x}, ${y}`)
-		// wyślij sygnał: drawMan(currPlayer.color, x, y)
+		// wyślij sygnał: drawMan(player.color, x, y)
 	}
 }
 
-function checkNeighbours(piece, x, y) {
-	var left = board[y*boardSize + x-1]
-	var right = board[y*boardSize + x+1]
-	var down = board[(y+1)*boardSize + x]
-	var up = board[(y-1)*boardSize + x]
-
+function checkNeighbours(piece, x, y, room) {
+	var left = room.board[y*boardSize + x-1]
+	var right = room.board[y*boardSize + x+1]
+	var down = room.board[(y+1)*boardSize + x]
+	var up = room.board[(y-1)*boardSize + x]
+	
 	var hasNeighbours = false
 
 	if(left) {
@@ -341,13 +369,13 @@ function checkNeighbours(piece, x, y) {
 	if(down) {
 		if(down[north].piece.type != piece[south].piece.type)
 			return false
-		hasNeighbours = true
+		hasNeighbours = true		
 
 	}
 	if(up) {
 		if(up[south].piece.type != piece[north].piece.type)
 			return false
-		hasNeighbours = true
+		hasNeighbours = true		
 	}
 	if(!hasNeighbours) return false
 	piece[west].neighbour = left[east]
@@ -357,23 +385,23 @@ function checkNeighbours(piece, x, y) {
 	return true
 }
 
-function mergeSegments(s1, s2) {
+function mergeSegments(s1, s2, room) {
 	console.log(`merguje : ${s1}, ${s2}`)
-	for(var a of segments[s2].parts) {
+	for(var a of room.segments[s2].parts) {
 		for(var i=0; i<4; i++) {
-			pieceAssign = board[a][i].assign
+			pieceAssign = room.board[a][i].assign
 			if(pieceAssign == s2) {
 				console.log("zmieniam")
-				board[a][i].assign = s1
+				room.board[a][i].assign = s1
 			}
 		}
-		if(segments[s1].parts.indexOf(a) == -1)
-			segments[s1].parts.push(a)
+		if(room.segments[s1].parts.indexOf(a) == -1)
+			room.segments[s1].parts.push(a) 
 	}
-	segments[s2] = null
+	room.segments[s2] = null
 	console.log("po zmergowaniu:")
-	console.log(segments[s1].parts)
-	console.log(segments[s2])
+	console.log(room.segments[s1].parts)
+	console.log(room.segments[s2])
 }
 
 
@@ -388,9 +416,14 @@ function sumUp(segment) {
 			givePoints(p, t)
 }
 
+function givePoints(player, points)
+{
+	player.points += points
+}
+
 function checkClosed(subPiece) {
 	var segment = subPiece.assign
-	if(segment.closed) return false
+	if(segment.closed) return false 
 	for (var a of segment.parts)
 		if(!a.neighbour)
 			return false
@@ -399,22 +432,29 @@ function checkClosed(subPiece) {
 	return true
 }
 
-function checkPossibility(piece, x, y) {
-	return !board[y*boardSize + x] && checkNeighbours(piece, x, y)
+function checkPossibility(piece, x, y, room) {
+	return !room.board[y*boardSize + x] && checkNeighbours(piece, x, y, room)
 }
 
-function endTurn() {
-	myTurn = false
-	for(var i = 0; i<4; i++)
-		checkClosed(currPiece[i])
-}
+function endTurn(room) {
+	room.turn++
+	if (room.turn >= room.playersCnt)
+		room.turn = 0
+	for(var i = 0; i < 4; i++)
+		checkClosed(room.currPiece[i])
+	room.currPiece = new createPiece(townAlone, roadStraight, fieldAlone, roadStraight, "../start.jpg")
+}	
 
-function addPiece(piece, x, y, rotation) {
-	currPiece = new drawnPiece(piece, x, y, rotation)
-	if(checkPossibility(currPiece, x, y)) {
-		board[y*boardSize + x] = currPiece
-		drawPiece(currPiece, boardToCanvas(x), boardToCanvas(y))
-		checkAssign(currPiece, x, y)
+function addPiece(piece, x, y, rotation, room, player) {
+	room.currPiece = new drawnPiece(piece, x, y, rotation)
+	//if(checkPossibility(room.currPiece, x, y, room)) 
+	{
+		room.board[y*boardSize + x] = room.currPiece
+		//drawPiece(currPiece, boardToCanvas(x), boardToCanvas(y))
+		console.log('T')
+		for (i in room.players)
+			room.players[i].socket.emit('drawPiece', {'piece': room.currPiece, 'pos': boardToCanvas(x, y, player.canvas)})
+		checkAssign(room.currPiece, x, y, room)
 		northBorder = Math.min(northBorder, y)
 		southBorder = Math.max(southBorder, y)
 		eastBorder = Math.max(eastBorder, x)
@@ -427,14 +467,17 @@ function addPiece(piece, x, y, rotation) {
 		for(var i=0; i<4; i++)
 			console.log(currPiece[i].assign)
 		*/
-		if(currPlayer.pieces)
-			mayAddMan = true
+		if(player.pieces)
+			player.mayAddMan = true
 		else
-			endTurn()
+			endTurn(room)
 	}
+	/*
 	else {
 		// wyślij sygnał: powiedz, że nie można
 		return false
 	}
+	*/
 	return true
 }
+

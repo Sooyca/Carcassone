@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+	<table width="100%" border="0" style="table-layout:fixed;"> <tr>  
+		<td valign="top" style="text-align:left;"> <a href="/roomsList"> Powrót </a> </td> 
+		<td style="text-align:center;"> <h3> Pokój <%= name %> </h3> </td>
+		<td valign="top" style="text-align:right;"> <a href="#" onclick="changeUsername()"> <%= username %> </a> </td>  
+	</tr> </table>
+	
+	<div align="center">
+	<span id="id"> </span> 
+	<span id="turn"> </span>
+	<button id="button" onclick="newGame()" style="display:none;">Nowa gra</button>
+	</br>
+	<canvas id="myCanvas" width="1000" height="1000" style="border:1px solid #000000;"></canvas>
+	</div>
+	
+	<script> var roomNo = <%= roomNo %> </script>
+	
+	<script src="/client.js"></script>
+	
+</body>
+</html>
+
