@@ -28,6 +28,7 @@
     "express-session": "^1.14.2",
     "fs": "0.0.1-security",
     "http": "0.0.0",
+    "pg": "6.1.2",
     "socket.io": "^1.7.2"
   }
 }

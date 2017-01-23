@@ -11,3 +11,14 @@ function changeUsername()
 	if (newUsername != null && newUsername != '')
 		window.location.assign('/changeUsername?returnUrl=' + window.location.href + '&newUsername=' + newUsername)
 }
+
+
+function logIn()
+{
+	
+}
+
+function register()
+{
+
+}
