@@ -44,7 +44,7 @@ app.get('/db', function (request, response) {
 
 
 app.get('/admin', function (request, response) {
-	window.alert("Nie bądź zbyt sprytny Julan.")
+	resposne.render('security')
 });
 app.set('view engine', 'ejs')
 app.set('views', './')
