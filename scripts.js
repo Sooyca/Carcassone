@@ -15,10 +15,18 @@ function changeUsername()
 
 function logIn()
 {
-	
+
 }
 
 function register()
 {
-
+	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+	  client.query('INSERT into users values (1, 'Ala', '34')', function(err, result) {
+		done();
+		if (err)
+		 { console.error(err); response.send("Error " + err); }
+		else
+		 { console.log('Dodano nowego użytkownika'); }
+	  });
+	});
 }
