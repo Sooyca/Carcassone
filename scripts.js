@@ -12,6 +12,7 @@ function changeUsername()
 		window.location.assign('/changeUsername?returnUrl=' + window.location.href + '&newUsername=' + newUsername)
 }
 
+var pg = require('pg');
 
 function logIn()
 {
