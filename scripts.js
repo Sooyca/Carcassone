@@ -21,10 +21,10 @@ function logIn()
 
 function register()
 {
-	window.alert("Alert");
 	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 	  client.query("INSERT INTO users VALUES (1, 'Ala', 34);", function(err, result) {
 		done();
+		window.alert("Alert");
 		if (err)
 		 { console.error(err); }
 		else
