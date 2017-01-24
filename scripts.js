@@ -31,4 +31,5 @@ function register()
 		 { console.log('Dodano nowego użytkownika'); }
 	  });
   });
+  return false
 }
