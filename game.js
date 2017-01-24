@@ -38,13 +38,17 @@ app.get('/db', function (request, response) {
        { console.error(err); response.send("Error " + err); }
       else
        {    console.log("snhgnhunagsnueicnrawigy7bawnigawgrsv");
-            console.log(result.row);
+            result.rows.forEach(
+                r => {
+                    console.log(r.name);
+                }
+            );
+
             response.render('views/pages/db', {results: result.rows} ); }
     });
   });
 });
 
-/*
 app.post('/register', (req, res) => {
     var dane = req.body;
     var wolne = false;
@@ -55,7 +59,7 @@ app.post('/register', (req, res) => {
            { console.error(err); response.send("Error " + err); }
           else
            {
-           if (result.rows) {
+           if (result.rows != undefined) {
 
            }
        }
@@ -89,7 +93,7 @@ app.post('/register', (req, res) => {
     });
     res.end();
 })
-*/
+
 app.set('view engine', 'ejs')
 app.set('views', './')
 app.use(bodyParser.urlencoded({ extended: true }))
