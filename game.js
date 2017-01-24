@@ -48,7 +48,7 @@ app.get('/db', function (request, response) {
     });
   });
 });
-
+/*
 app.post('/register', (req, res) => {
     var dane = req.body;
     var wolne = false;
@@ -93,7 +93,7 @@ app.post('/register', (req, res) => {
     });
     res.end();
 })
-
+*/
 app.set('view engine', 'ejs')
 app.set('views', './')
 app.use(bodyParser.urlencoded({ extended: true }))
