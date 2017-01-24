@@ -5,14 +5,37 @@
 <script src="/scripts.js"></script>
 </head>
 <body>
+	<script>
+		$(document).ready(function(){
+			$("#rejestracja_formularz").hide();
+			$("#rejestracja_przycisk").click(function(){
+				$("#rejestracja_formularz").toggle();
+			});
+		})
+	</script>
 	<table width="100%" style="table-layout:fixed;"> <tr>
 		<td></td>
 		<td style="text-align:center;"> <h1>Carcassone</h1> </td>
-		<td valign="top" style="text-align:right;"> <a href="#" onclick="logIn()"> Logowanie </a> | <a href="#" onclick="register()"> Reyestracya </a> </td>
-	</tr> </table>
-	<div align="center"> <font size="4"> <a href="/roomsList">Lista pokoyów</a> </font> </div>
-	<div align="center"> <font size="4"> <a href="#" onclick="createRoom()">Stwórz pokóy</a> </font> </div>
-	<button onclick="register()">button</button>
+		<td valign="top" style="text-align:right;"> <a href="#" onclick="logIn()"> Logowanie </a> | <button id="rejestracja_przycisk"> Reyestracya </button> </td>
+	</tr>
+	<tr>
+		<td></td>
+		<td>
+		<div align="center"> <font size="4"> <a href="/roomsList">Lista pokoyów</a> </font> </div>
+		<div align="center"> <font size="4"> <a href="#" onclick="createRoom()">Stwórz pokóy</a> </font> </div>
+		</td>
+		<td><div align="right" id="rejestracja_formularz">
+			<form metod="post" action="register">
+				Nazwa użytkownika:
+				<input type="text" name="nazwa" maxlength="20">
+				Hasło:
+				<input type="password" name="haslo" maxlength="30">
+				<input  type="submit" formmethod="post"  value="Przygotuj deklaracje" />
+			</form>
+		</div>
+		</td>
+	</tr>
+ </table>
 
 </body>
 </html>

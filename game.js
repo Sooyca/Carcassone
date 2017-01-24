@@ -42,7 +42,52 @@ app.get('/db', function (request, response) {
   });
 });
 
+/*
+app.post('/register', (req, res) => {
+    var dane = req.body;
+    var wolne = false;
+      pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+        client.query('SELECT name FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
+          done();
+          if (err)
+           { console.error(err); response.send("Error " + err); }
+          else
+           {
+           if (result.rows) {
 
+           }
+       }
+        });
+    });
+    if()
+    pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+	  client.query("INSERT INTO users VALUES (1, 'Ala', 34);", function(err, result) {
+		done();
+		if (err)
+		 { console.error(err); }
+		else
+        {
+            var my_id_key
+            fs.readFile('/data/users', (err, data) =>
+               {
+                   if (err) throw err;
+                   console.log(data);
+                   my_id_key = data;
+           });
+
+            my_id_key = my_id_key + 1;
+            fs.writeFile('/data/users', my_id_key, function(err) {
+                if(err) {
+                    return console.log(err);
+                }
+            });
+            console.log('Dodano nowego użytkownika');
+        }
+     });
+    });
+    res.end();
+})
+*/
 app.set('view engine', 'ejs')
 app.set('views', './')
 app.use(bodyParser.urlencoded({ extended: true }))
