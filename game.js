@@ -73,7 +73,7 @@ app.post('/register', (req, res) => {
     if(wolne == true)
     {
         pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.name] function(err, result) {
+    	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.name], function(err, result) {
     		done();
     		if (err)
     		 { console.error(err); }
