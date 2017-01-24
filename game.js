@@ -38,7 +38,7 @@ app.get('/db', function (request, response) {
        { console.error(err); response.send("Error " + err); }
       else
        {    console.log("snhgnhunagsnueicnrawigy7bawnigawgrsv");
-            console.log(results.row);
+            console.log(result.row);
             response.render('views/pages/db', {results: result.rows} ); }
     });
   });
