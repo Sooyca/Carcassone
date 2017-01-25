@@ -51,6 +51,7 @@ app.get('/db', function (request, response) {
 
 app.post('/register', (req, res) => {
     var dane = req.body;
+    console.log(req.body);
     var wolne = false;
       pg.connect(process.env.DATABASE_URL, function(err, client, done) {
         client.query('SELECT name FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
