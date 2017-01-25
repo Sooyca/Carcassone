@@ -49,7 +49,7 @@ app.get('/db', function (request, response) {
   });
 });
 
-app.post('/register', (req, res) => {
+app.post('/', (req, res) => {
     var dane = req.body;
     console.log(req.body);
     var wolne = false;
