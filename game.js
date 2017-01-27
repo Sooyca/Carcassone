@@ -105,13 +105,13 @@ app.post('/', (req, res) => {
                 if(i == 0)
                 {
                     console.log("przed wpisaniem")
-                    var my_id_key
+                    var my_id_key;
                     fs.readFile('./data/users', 'utf-8', (err, data) =>
                        {
                            if (err) throw err;
                            console.log("plik");
                            console.log(data);
-                           my_id_key = data;
+                           my_id_key = data + 0;
                    });
                    console.log(my_id_key);
                     pg.connect(process.env.DATABASE_URL, function(err, client, done) {
