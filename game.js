@@ -106,34 +106,45 @@ app.post('/', (req, res) => {
                 {
                     console.log("przed wpisaniem")
                     var my_id_key;
-                    fs.readFile('./data/users', 'utf-8', (err, data) =>
+                    var file_read_promise = new Promise(function(resolve, reject) {
+                        fs.readFile('./data/users', 'utf-8', (err, data) =>
                        {
                            if (err) throw err;
                            console.log("plik");
                            console.log(data);
                            my_id_key = data + 0;
-                   });
-                   console.log(my_id_key);
-                    pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-                	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.nazwa], function(err, result) {
-                		done();
-                		if (err)
-                		 { console.error(err); }
-                		else
-                        {
-                            my_id_key = my_id_key + 1;
-                            fs.writeFile('./data/users', my_id_key, function(err) {
-                                if(err) {
-                                    return console.log(err);
-                                }
+                       });
+                       resolve(my_id_key);
+                   })
+                   file_read_promise.then(function(resolve)
+                   {
+                        console.log(my_id_key);
+                        pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+                    	       client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.nazwa], function(err, result) {
+                            		done();
+                            		if (err)
+                            		 { console.error(err); }
+                            		else
+                                    {
+                                        my_id_key = my_id_key + 1;
+                                        fs.writeFile('./data/users', my_id_key, function(err) {
+                                            if(err) {
+                                                return console.log(err);
+                                            }
+                                        });
+                                        console.log('Dodano nowego użytkownika');
+                                    }
+                                    });
                             });
-                            console.log('Dodano nowego użytkownika');
+                        },
+                        function(reject)
+                        {
+                            console.log("Błąd odczytu pliku.")
                         }
-                     });
-                    });
+                )
                 }
-                else
-                {
+            else
+            {
                     //.alert("Nazwa użytkownika jest zajęta;")
                     console.log("wolne nie true");
                 }
