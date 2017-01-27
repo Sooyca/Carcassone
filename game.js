@@ -62,7 +62,7 @@ app.get('/db', function (request, response) {
 });
 
 app.post('/', (req, res) => {
-    var hide_show;
+    var hide_show = {};
     hide_show.register_menu = "hide";
     var register_promise = new Promise(
         function(resolve0, reject0)
@@ -211,7 +211,7 @@ app.get('/admin', function (request, response) {
 
 app.get('/', (req, res) =>
 {
-    var hide_show;
+    var hide_show = {};
     hide_show.register_menu = "hide";
 	var username
 	if (!req.cookies.username)
