@@ -142,6 +142,7 @@ app.post('/', (req, res) => {
                                                     }
                                                 });
                                                 console.log('Dodano nowego użytkownika');
+                                                resolve0(true);
                                             }
                                             });
                                     });
@@ -175,6 +176,10 @@ app.post('/', (req, res) => {
     register_promise.then(
         function(resolve0)
         {
+            if(resolve0)
+            {
+                hide_show.register_menu = 'show';
+            }
             var username
             if (!req.cookies.username)
             {
