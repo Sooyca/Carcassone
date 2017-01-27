@@ -102,7 +102,7 @@ app.post('/', (req, res) => {
         })
         console.log(wolne);
         select_promise.then(
-            fuction(result)
+            function(result)
             {
                 if(result == true)
                 {
