@@ -112,7 +112,7 @@ app.post('/', (req, res) => {
                            if (err) throw err;
                            console.log("plik");
                            console.log(data);
-                           my_id_key = data + 0;
+                           my_id_key = data[1] * 1;
                            resolve(my_id_key);
                        });
                    })
