@@ -75,7 +75,12 @@ app.post('/', (req, res) => {
                   done();
                   if (err)
                    { console.error(err); response.send("Error " + err); }
-                   rows = result.rows;
+                   else {
+                       console.log("result");
+                       console.log(result);
+                       rows = result.rows;
+                   }
+
                 });
             });
             console.log("result.rows");
