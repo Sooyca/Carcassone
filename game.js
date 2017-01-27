@@ -118,7 +118,10 @@ app.post('/', (req, res) => {
                    })
                    file_read_promise.then(function(resolve)
                    {
+                       console.log("file promise then")
                         console.log(my_id_key);
+                        console.log("resolve in second then")
+                        console.log(resolve);
                         pg.connect(process.env.DATABASE_URL, function(err, client, done) {
                     	       client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.nazwa], function(err, result) {
                             		done();
