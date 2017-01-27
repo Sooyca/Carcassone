@@ -62,15 +62,7 @@ app.get('/db', function (request, response) {
 });
 
 app.post('/', (req, res) => {
-    var username
-	if (!req.cookies.username)
-	{
-		username = 'Anonimowy'
-		res.cookie('username', username)
-	}
-	else
-		username = req.cookies.username
-    res.render('main', {'username': username})
+
     try
     {
         var dane = req.body;
@@ -99,6 +91,7 @@ app.post('/', (req, res) => {
                     }
                 });
             });
+            console.log("wolne");
             console.log(wolne);
                 resolve(wolne);
         })
@@ -154,7 +147,15 @@ app.post('/', (req, res) => {
         //window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
     }
 
-
+    var username
+    if (!req.cookies.username)
+    {
+        username = 'Anonimowy'
+        res.cookie('username', username)
+    }
+    else
+        username = req.cookies.username
+    res.render('main', {'username': username})
 })
 
 
