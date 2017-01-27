@@ -79,6 +79,7 @@ app.post('/', (req, res) => {
                 });
             });
             console.log("result.rows");
+            console.log(result.rows);
                 resolve(result.rows);
         })
 
@@ -134,6 +135,7 @@ app.post('/', (req, res) => {
             function(err)
             {
                 console.log("Błąd")
+                console.log(resolve);
             }
         )
     }
