@@ -112,7 +112,9 @@ app.post('/', (req, res) => {
                            if (err) throw err;
                            console.log("plik");
                            console.log(data);
-                           my_id_key = data[1] * 1;
+                           my_id_key = data[0] * 1;
+                           console.log("my_id_key po przypisaniu");
+                           console.log(my_id_key)
                            resolve(my_id_key);
                        });
                    })
