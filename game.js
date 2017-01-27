@@ -90,6 +90,7 @@ app.post('/', (req, res) => {
                                i = i + 1;
                            }
                        );
+                       console.log("Select")
                        console.log(i);
                        console.log(result.rows);
                    if (i == 0) {
@@ -98,9 +99,10 @@ app.post('/', (req, res) => {
                     }
                 });
             });
+            console.log(wolne);
                 resolve(wolne);
         })
-        console.log(wolne);
+
         select_promise.then(
             function(result)
             {
@@ -118,6 +120,7 @@ app.post('/', (req, res) => {
                             fs.readFile('/data/users', (err, data) =>
                                {
                                    if (err) throw err;
+                                   console.log("plik");
                                    console.log(data);
                                    my_id_key = data;
                            });
@@ -136,6 +139,7 @@ app.post('/', (req, res) => {
                 else
                 {
                     //.alert("Nazwa użytkownika jest zajęta;")
+                    console.log("wolne nie true");
                 }
             },
             function(err)
