@@ -27,6 +27,7 @@ app.use(session(
 }))
 
 
+
 var pg = require('pg');
 
 pg.defaults.ssl = true;
@@ -167,7 +168,7 @@ io.on('connection', function(socket)
 server.listen( process.env.PORT || 5000)
 console.log('server started')
 
-
+exports.appe = app; 
 
 
 var canvasSize = 1000

@@ -1,7 +1,11 @@
 var pg = require('pg');
 var bodyParser = require('body-parser')
+var fs = require('fs')
+var express = require('express')
+var server = require('server.js')
 
-express().use(bodyParser.urlencoded({ extended: true }));
+
+server.appe.use(bodyParser.urlencoded({ extended: true }));
 
 exports.show_zawartosc = function(request, response) {
 pg.connect(process.env.DATABASE_URL, function(err, client, done) {
