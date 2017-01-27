@@ -113,8 +113,8 @@ app.post('/', (req, res) => {
                            console.log("plik");
                            console.log(data);
                            my_id_key = data + 0;
+                           resolve(my_id_key);
                        });
-                       resolve(my_id_key);
                    })
                    file_read_promise.then(function(resolve)
                    {
