@@ -75,68 +75,80 @@ app.post('/', (req, res) => {
     {
         var dane = req.body;
         console.log(req.body);
-        var wolne = false;
-          pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-            client.query('SELECT name FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
-              done();
-              if (err)
-               { console.error(err); response.send("Error " + err); }
-              else
-               { let i = 0;
-                   result.rows.forEach(
-                       r => {
-                           i = i + 1;
-                       }
-                   );
-                   console.log(i);
-                   console.log(result.rows);
-               if (i == 0) {
-                   wolne = true;
-               }
-                }
+
+         var select_promise = new Promise(function (resolve, reject){
+             var wolne = false;
+                 pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+                client.query('SELECT name FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
+                  done();
+                  if (err)
+                   { console.error(err); response.send("Error " + err); }
+                  else
+                   { let i = 0;
+                       result.rows.forEach(
+                           r => {
+                               i = i + 1;
+                           }
+                       );
+                       console.log(i);
+                       console.log(result.rows);
+                   if (i == 0) {
+                       wolne = true;
+                   }
+                    }
+                });
             });
-        });
+                resolve(wolne);
+        })
         console.log(wolne);
-        if(wolne == true)
-        {console.log("przed wpisaniem")
-            pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-        	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.name], function(err, result) {
-        		done();
-        		if (err)
-        		 { console.error(err); }
-        		else
-                {
-                    var my_id_key
-                    fs.readFile('/data/users', (err, data) =>
-                       {
-                           if (err) throw err;
-                           console.log(data);
-                           my_id_key = data;
-                   });
+        select_promise.then(
+            fuction(result)
+            {
+                if(result == true)
+                {console.log("przed wpisaniem")
+                    pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+                	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.name], function(err, result) {
+                		done();
+                		if (err)
+                		 { console.error(err); }
+                		else
+                        {
+                            var my_id_key
+                            fs.readFile('/data/users', (err, data) =>
+                               {
+                                   if (err) throw err;
+                                   console.log(data);
+                                   my_id_key = data;
+                           });
 
-                    my_id_key = my_id_key + 1;
-                    fs.writeFile('/data/users', my_id_key, function(err) {
-                        if(err) {
-                            return console.log(err);
+                            my_id_key = my_id_key + 1;
+                            fs.writeFile('/data/users', my_id_key, function(err) {
+                                if(err) {
+                                    return console.log(err);
+                                }
+                            });
+                            console.log('Dodano nowego użytkownika');
                         }
+                     });
                     });
-                    console.log('Dodano nowego użytkownika');
                 }
-             });
-            });
-        }
-        else
+                else
+                {
+                    //.alert("Nazwa użytkownika jest zajęta;")
+                }
+            }
+            catch(err)
+            {
+                console.log(err);
+                //window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
+            }
+        },
+        function(err)
         {
-            //.alert("Nazwa użytkownika jest zajęta;")
+            console.log("Błąd")
         }
-    }
-    catch(err)
-    {
-        console.log(err);
-        //window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
-    }
+    )
 })
-
 
 
 
