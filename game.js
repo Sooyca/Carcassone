@@ -105,7 +105,8 @@ app.post('/', (req, res) => {
             fuction(result)
             {
                 if(result == true)
-                {console.log("przed wpisaniem")
+                {
+                    console.log("przed wpisaniem")
                     pg.connect(process.env.DATABASE_URL, function(err, client, done) {
                 	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.name], function(err, result) {
                 		done();
@@ -136,18 +137,20 @@ app.post('/', (req, res) => {
                 {
                     //.alert("Nazwa użytkownika jest zajęta;")
                 }
-            }
-            catch(err)
+            },
+            function(err)
             {
-                console.log(err);
-                //window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
+                console.log("Błąd")
             }
-        },
-        function(err)
-        {
-            console.log("Błąd")
-        }
-    )
+        )
+    }
+    catch(err)
+    {
+        console.log(err);
+        //window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
+    }
+
+
 })
 
 
