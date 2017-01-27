@@ -105,6 +105,14 @@ app.post('/', (req, res) => {
                 if(i == 0)
                 {
                     console.log("przed wpisaniem")
+                    var my_id_key
+                    fs.readFile('/data/users', (err, data) =>
+                       {
+                           if (err) throw err;
+                           console.log("plik");
+                           console.log(data);
+                           my_id_key = data;
+                   });
                     pg.connect(process.env.DATABASE_URL, function(err, client, done) {
                 	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.name], function(err, result) {
                 		done();
@@ -112,15 +120,6 @@ app.post('/', (req, res) => {
                 		 { console.error(err); }
                 		else
                         {
-                            var my_id_key
-                            fs.readFile('/data/users', (err, data) =>
-                               {
-                                   if (err) throw err;
-                                   console.log("plik");
-                                   console.log(data);
-                                   my_id_key = data;
-                           });
-
                             my_id_key = my_id_key + 1;
                             fs.writeFile('/data/users', my_id_key, function(err) {
                                 if(err) {
