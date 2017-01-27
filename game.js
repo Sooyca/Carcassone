@@ -75,31 +75,27 @@ app.post('/', (req, res) => {
                   done();
                   if (err)
                    { console.error(err); response.send("Error " + err); }
-                  else
-                   { let i = 0;
-                       result.rows.forEach(
-                           r => {
-                               i = i + 1;
-                           }
-                       );
-                       console.log("Select")
-                       console.log(i);
-                       console.log(result.rows);
-                   if (i == 0) {
-                       wolne = true;
-                   }
-                    }
+
                 });
             });
-            console.log("wolne");
-            console.log(wolne);
-                resolve(wolne);
+            console.log("result.rows");
+                resolve(result.rows);
         })
 
         select_promise.then(
-            function(result)
+            function(resolve)
             {
-                if(result == true)
+                let i = 0;
+                resolve.forEach(
+                    r => {
+                        i = i + 1;
+                    }
+                );
+                console.log("przed przed wpisaniem")
+                console.log(i);
+                console.log(resolve);
+
+                if(i == 0)
                 {
                     console.log("przed wpisaniem")
                     pg.connect(process.env.DATABASE_URL, function(err, client, done) {
