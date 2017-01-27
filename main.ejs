@@ -7,6 +7,8 @@
 <body>
 	<script>
 		$(document).ready(function(){
+			if(hide_show.register_menu != "show_with_error")
+				$("#rejestracja_blad").hide();
 			$("#rejestracja_formularz").hide();
 			$("#rejestracja_przycisk").click(function(){
 				$("#rejestracja_formularz").toggle();
@@ -15,7 +17,7 @@
 	</script>
 	<table width="100%" style="table-layout:fixed;"> <tr>
 		<td></td>
-		<td style="text-align:center;"> <h1>Carcassone</h1> </td>
+		<td style="text-align:center;"> <h1>Carcassonne</h1> </td>
 		<td valign="top" style="text-align:right;"> <a href="#" onclick="logIn()"> Logowanie </a> | <button id="rejestracja_przycisk"> Reyestracya </button> </td>
 	</tr>
 	<tr>
@@ -25,6 +27,7 @@
 		<div align="center"> <font size="4"> <a href="#" onclick="createRoom()">Stwórz pokóy</a> </font> </div>
 		</td>
 		<td><div align="right" id="rejestracja_formularz">
+			<div id="rejestracja_blad" color="red"> Nieudana próba rejestracji. </div>
 			<form metod="POST">
 				<table>
 				<tr><td><div align="right">Nazwa użytkownika:</div></td></tr>
