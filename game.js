@@ -88,10 +88,12 @@ app.post('/', (req, res) => {
                            i = i + 1;
                        }
                    );
+                   console.log(i);
+                   console.log(result.rows);
                if (i == 0) {
                    wolne = true;
                }
-           }
+                }
             });
         });
         if(wolne == true)
