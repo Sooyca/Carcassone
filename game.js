@@ -113,6 +113,7 @@ app.post('/', (req, res) => {
                            console.log(data);
                            my_id_key = data;
                    });
+                   console.log(my_id_key);
                     pg.connect(process.env.DATABASE_URL, function(err, client, done) {
                 	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.nazwa], function(err, result) {
                 		done();
