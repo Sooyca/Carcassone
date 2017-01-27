@@ -157,6 +157,7 @@ app.post('/', (req, res) => {
 						{
 								//.alert("Nazwa użytkownika jest zajęta;")
 								console.log("wolne nie true");
+								reject0(true)
 						}
 					},
 					function(err)

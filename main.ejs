@@ -7,7 +7,8 @@
 <body>
 	<script>
 		$(document).ready(function(){
-			$("#rejestracja_blad").hide();
+			if(hide_show.register_menu != "show_with_error")
+				{$("#rejestracja_blad").hide();}
 			$("#rejestracja_formularz").hide();
 			$("#rejestracja_przycisk").click(function(){
 				$("#rejestracja_formularz").toggle();
