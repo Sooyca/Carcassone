@@ -14,6 +14,18 @@ var cnt = 0
 var rooms = []
 var users = {}
 
+app.set('view engine', 'ejs')
+app.set('views', './')
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use( cookieParser() )
+app.use(express.static('./'))
+app.use(session(
+{
+	secret: 'dfgfsgfsgsf',
+	resave: false,
+	saveUninitialized: true
+}))
+
 
 var pg = require('pg');
 
@@ -50,75 +62,80 @@ app.get('/db', function (request, response) {
 });
 
 app.post('/', (req, res) => {
-    var dane = req.body;
-    console.log(req.body);
-    var wolne = false;
-      pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-        client.query('SELECT name FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
-          done();
-          if (err)
-           { console.error(err); response.send("Error " + err); }
-          else
-           { let i = 0;
-               result.rows.forEach(
-                   r => {
-                       i = i + 1;
-                   }
-               );
-           if (i == 0) {
-               wolne =true;
-           }
-       }
-        });
-    });
-    if(wolne == true)
+    var username
+	if (!req.cookies.username)
+	{
+		username = 'Anonimowy'
+		res.cookie('username', username)
+	}
+	else
+		username = req.cookies.username
+    res.render('main', {'username': username})
+    try
     {
-        pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-    	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.name], function(err, result) {
-    		done();
-    		if (err)
-    		 { console.error(err); }
-    		else
-            {
-                var my_id_key
-                fs.readFile('/data/users', (err, data) =>
-                   {
-                       if (err) throw err;
-                       console.log(data);
-                       my_id_key = data;
-               });
-
-                my_id_key = my_id_key + 1;
-                fs.writeFile('/data/users', my_id_key, function(err) {
-                    if(err) {
-                        return console.log(err);
-                    }
-                });
-                console.log('Dodano nowego użytkownika');
-            }
-         });
+        var dane = req.body;
+        console.log(req.body);
+        var wolne = false;
+          pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+            client.query('SELECT name FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
+              done();
+              if (err)
+               { console.error(err); response.send("Error " + err); }
+              else
+               { let i = 0;
+                   result.rows.forEach(
+                       r => {
+                           i = i + 1;
+                       }
+                   );
+               if (i == 0) {
+                   wolne = true;
+               }
+           }
+            });
         });
+        if(wolne == true)
+        {
+            pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+        	  client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.name], function(err, result) {
+        		done();
+        		if (err)
+        		 { console.error(err); }
+        		else
+                {
+                    var my_id_key
+                    fs.readFile('/data/users', (err, data) =>
+                       {
+                           if (err) throw err;
+                           console.log(data);
+                           my_id_key = data;
+                   });
+
+                    my_id_key = my_id_key + 1;
+                    fs.writeFile('/data/users', my_id_key, function(err) {
+                        if(err) {
+                            return console.log(err);
+                        }
+                    });
+                    console.log('Dodano nowego użytkownika');
+                }
+             });
+            });
+        }
+        else {
+            window.alert("Nazwa użytkownika jest zajęta;")
+        }
     }
-    else {
-        window.alert("Nazwa użytkownika jest zajęta;")
+    catch(err)
+    {
+        console.log(err);
+        window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
     }
-    res.end();
 })
 
 
 
 
-app.set('view engine', 'ejs')
-app.set('views', './')
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use( cookieParser() )
-app.use(express.static('./'))
-app.use(session(
-{
-	secret: 'dfgfsgfsgsf',
-	resave: false,
-	saveUninitialized: true
-}))
 
 app.get('/admin', function (request, response) {
 	response.render('security')
