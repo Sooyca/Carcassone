@@ -79,13 +79,14 @@ app.post('/', (req, res) => {
                        console.log("result");
                        console.log(result);
                        rows = result.rows;
+                       console.log("result.rows");
+                       console.log(rows);
+                           resolve(rows);
                    }
 
                 });
             });
-            console.log("result.rows");
-            console.log(rows);
-                resolve(rows);
+
         })
 
         select_promise.then(
