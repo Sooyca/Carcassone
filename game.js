@@ -106,7 +106,7 @@ app.post('/', (req, res) => {
                 {
                     console.log("przed wpisaniem")
                     var my_id_key
-                    fs.readFile('/data/users', (err, data) =>
+                    fs.readFile('./data/users', (err, data) =>
                        {
                            if (err) throw err;
                            console.log("plik");
@@ -121,7 +121,7 @@ app.post('/', (req, res) => {
                 		else
                         {
                             my_id_key = my_id_key + 1;
-                            fs.writeFile('/data/users', my_id_key, function(err) {
+                            fs.writeFile('./data/users', my_id_key, function(err) {
                                 if(err) {
                                     return console.log(err);
                                 }
