@@ -122,14 +122,15 @@ app.post('/', (req, res) => {
              });
             });
         }
-        else {
-            window.alert("Nazwa użytkownika jest zajęta;")
+        else
+        {
+            //.alert("Nazwa użytkownika jest zajęta;")
         }
     }
     catch(err)
     {
         console.log(err);
-        window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
+        //window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
     }
 })
 
