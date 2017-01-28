@@ -61,7 +61,7 @@ app.get('/db', function (request, response) {
 	});
 });
 
-app.post('/', (req, res) => {
+app.post('/register', (req, res) => {
 	var hide_show = {};
 	hide_show.register_menu = "hide";
 	var register_promise = new Promise(
