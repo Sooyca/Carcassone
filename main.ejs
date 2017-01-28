@@ -8,9 +8,9 @@
 	<script>
 		$(document).ready(function(){
 			console.log("hide_show.register_menu")
-			if("<%= hide_show.register_menu %>" != "show_with_error")
-				{$("#rejestracja_blad").hide();}
-			$("#rejestracja_formularz").hide();
+			if("<%= hide_show.register_menu %>" == "show_with_error")
+				{$("#rejestracja_blad").show();}
+		//	$("#rejestracja_formularz").hide();
 			$("#rejestracja_przycisk").click(function(){
 				$("#rejestracja_formularz").toggle();
 			});
@@ -27,8 +27,8 @@
 		<div align="center"> <font size="4"> <a href="/roomsList">Lista pokoyów</a> </font> </div>
 		<div align="center"> <font size="4"> <a href="#" onclick="createRoom()">Stwórz pokóy</a> </font> </div>
 		</td>
-		<td><div align="right" id="rejestracja_blad" style="color:red"> Nieudana próba rejestracji. </div>
-			<div align="right" id="rejestracja_formularz">
+		<td><div align="right" id="rejestracja_blad" style="color:red;display:none"> Nieudana próba rejestracji. </div>
+			<div align="right" id="rejestracja_formularz" style="display:none">
 			<form metod="POST">
 				<table>
 				<tr><td><div align="right">Nazwa użytkownika:</div></td></tr>
