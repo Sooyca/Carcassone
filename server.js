@@ -290,7 +290,7 @@ app.post('/logIn', (req, res) =>
 			client.query('SELECT password FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
 			  done();
 			  if (err)
-			   { console.error(err); response.send("Error " + err); reject0(true); }
+			   { console.error(err); res.send("Error " + err); reject0(true); }
 			   else {
 				   console.log("result");
 				   console.log(result);
@@ -359,6 +359,27 @@ function authorize(req, res, next)
 	else
 		res.redirect('/admin')
 }
+
+
+app.get("/wyniki", authorize, function(req, res){
+	var username = req.session.username
+	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+	  client.query('SELECT * FROM games WHERE ;', [username] function(err, result) {
+	    done();
+	    if (err)
+	     { console.error(err); res.send("Error " + err); }
+	    else
+	     {    console.log("jddfykf");
+	          result.rows.forEach(
+	              r => {
+	                  console.log(r.name);
+	              }
+	          );
+
+	          response.render('wyniki', {results: result.rows} ); }
+	  });
+	});
+})
 
 app.get("/wyloguj", function (req, res)
 {
