@@ -232,6 +232,8 @@ app.get('/', (req, res) =>
 {
     var hide_show = {};
     hide_show.register_menu = "hide";
+	hide_show.logIn_menu = "hide"
+	hide_show.zalogowanie = "nie"
 	var username
 	if (!req.session.username)
 	{
@@ -288,14 +290,14 @@ app.post('/logIn', (req, res) =>
 			client.query('SELECT password FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
 			  done();
 			  if (err)
-			   { console.error(err); response.send("Error " + err); reject(true); }
+			   { console.error(err); response.send("Error " + err); reject0(true); }
 			   else {
 				   console.log("result");
 				   console.log(result);
 				   rows = result.rows;
 				   console.log("result.rows");
 				   console.log(rows);
-					   resolve(rows);
+					   resolve0(rows);
 			   }
 
 			});
