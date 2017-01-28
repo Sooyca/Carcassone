@@ -182,13 +182,13 @@ app.post('/register', (req, res) => {
 				hide_show.register_menu = 'show';
 			}
 			var username
-			if (!req.cookies.username)
+			if (!req.session.username)
 			{
 				username = 'Anonimowy'
 				res.cookie('username', username)
 			}
 			else
-				username = req.cookies.username
+				username = req.session.username
 				res.redirect('/')
 		},
 		function(reject0)
@@ -196,13 +196,13 @@ app.post('/register', (req, res) => {
 			hide_show.register_menu = "show_with_error"
 			console.log("Ujojoj");
 			var username
-			if (!req.cookies.username)
+			if (!req.session.username)
 			{
 				username = 'Anonimowy'
 				res.cookie('username', username)
 			}
 			else
-				username = req.cookies.username
+				username = req.session.username
 			res.render('glowna', {'username': username, 'hide_show': hide_show})
 		}
 	)
@@ -233,22 +233,23 @@ app.get('/', (req, res) =>
     var hide_show = {};
     hide_show.register_menu = "hide";
 	var username
-	if (!req.cookies.username)
+	if (!req.session.username)
 	{
 		username = 'Anonimowy'
 		res.cookie('username', username)
 	}
 	else
 	{
-		username = req.cookies.username
+		username = req.session.username
 		hide_show.zalogowanie = "zalogowany"
 	}
+	console.log(hide_show.zalogowanie)
 	res.render('glowna', {'username': username, 'hide_show': hide_show})
 })
 
 app.get('/roomsList', authorize, (req, res) =>
 {
-	res.render('roomsList', {'rooms': rooms, 'username': req.cookies.username})
+	res.render('roomsList', {'rooms': rooms, 'username': req.session.username})
 })
 
 app.get('/changeUsername', (req, res) =>
@@ -271,7 +272,7 @@ app.get('/rooms/:id', (req, res) =>
 	if (rooms[id].players.length >= 6)
 		res.redirect('/roomsList')
 	else
-		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.cookies.username})
+		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.session.username})
 })
 
 app.post('/logIn', (req, res) =>
@@ -308,13 +309,13 @@ app.post('/logIn', (req, res) =>
 			{
 				req.session.username = req.body.nazwa
 				var username
-				if (!req.cookies.username)
+				if (!req.session.username)
 				{
 					username = 'Anonimowy'
 					res.cookie('username', username)
 				}
 				else
-					username = req.cookies.username
+					username = req.session.username
 				res.redirect('/')
 
 			}
@@ -332,13 +333,13 @@ app.post('/logIn', (req, res) =>
 			hide_show.logIn_menu = "show_with_error"
 			console.log("Ujojoj");
 			var username
-			if (!req.cookies.username)
+			if (!req.session.username)
 			{
 				username = 'Anonimowy'
 				res.cookie('username', username)
 			}
 			else
-				username = req.cookies.username
+				username = req.session.username
 			res.render('glowna', {'username': username, 'hide_show': hide_show})
 		}
 	)
