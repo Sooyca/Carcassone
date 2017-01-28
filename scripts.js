@@ -12,7 +12,10 @@ function changeUsername()
 		window.location.assign('/changeUsername?returnUrl=' + window.location.href + '&newUsername=' + newUsername)
 }
 
-
+function logOut()
+{
+	window.location.assign('/wyloguj')
+}
 
 function logIn()
 {

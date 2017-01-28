@@ -5,6 +5,77 @@
         <script src="/scripts.js"></script>
     </head>
     <body>
-        bogobogo
+        <script>
+            $(document).ready(function(){
+                console.log("hide_show.register_menu")
+                if("<%= hide_show.register_menu %>" == "show_with_error")
+                    {$("#rejestracja_blad").show();}
+            //	$("#rejestracja_formularz").hide();
+                $("#rejestracja_przycisk").click(function(){
+                    $("#rejestracja_formularz").toggle();
+                });
+                $("#logowanie_przycisk").click(function(){
+                    $("#logowanie_formularz").toggle();
+                });
+                if("<%= hide_show.logIn_menu %>" == "show_with_error")
+                    {$("#logowanie_blad").show();}
+                if("<%= hide_show.logowanie_menu %>" == "niezalogowany")
+                    {$("#niezalogowany_alert").show();}
+                if("<%= hide_show.zalogowanie %>" == "zalogowany")
+                    {$("#logowanie_rejestracja").hide(); $("#zalogowanie").show();}
+            })
+        </script>
+        <table width="100%" style="table-layout:fixed;"> <tr>
+            <td></td><div id="logowanie_rejestracja">
+            <td style="text-align:center;"> <h1>grajse</h1> </td>
+            <td valign="top" style="text-align:right;"> <button id="logowanie_przycisk"> Logowanie </button> | <button id="rejestracja_przycisk"> Reyestracya </button>
+            </div>
+            <div id="zalogowanie" style="display:none">"<%= username %>" |  <button id="wylogowanie_przycisk" onclick = "logOut()"> Wyloguj </button><\div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+            <div align="center"> <font size="4"> <a href="/roomsList">Carcassonne</a> </font> </div>
+            </td>
+        </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            <td><div align="right" id="logowanie_blad" style="color:red;display:none"> Nieudana próba logowania. </div>
+                <div align="right" id="niezalogowanie_alert" style="color:red;display:none"> Zaloguj się by móc grać. </div>
+                <div align="right" id="logowanie_formularz" style="display:none">
+                <form method="POST" action="logIn">
+                    <table>
+                    <tr><td><div align="right">Nazwa użytkownika:</div></td></tr>
+                    <tr><td><input type="text" name='nazwa' maxlength="20"/></td></tr>
+                    <tr><td><div align="right">Hasło:</div></td></tr>
+                    <tr><td><input type="password" name='haslo' maxlength="30"/></td></tr>
+                </tr><td><input  type="submit" formmethod="post"  value="Zaloguj się"/></td></tr>
+                </table>
+                </form>
+            </div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td>
+                <div align="right" id="rejestracja_blad" style="color:red;display:none"> Nieudana próba rejestracji. </div>
+                    <div align="right" id="rejestracja_formularz" style="display:none">
+                    <form method="POST" action="register">
+                        <table>
+                        <tr><td><div align="right">Nazwa użytkownika:</div></td></tr>
+                        <tr><td><input type="text" name='nazwa' maxlength="20"/></td></tr>
+                        <tr><td><div align="right">Hasło:</div></td></tr>
+                        <tr><td><input type="password" name='haslo' maxlength="30"/></td></tr>
+                    </tr><td><input  type="submit" formmethod="post"  value="Zareyestruy"/></td></tr>
+                    </table>
+                    </form>
+                </div>
+            </td>
+        </tr>
+     </table>
+
     </body>
 </html>

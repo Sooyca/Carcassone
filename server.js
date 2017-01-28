@@ -189,7 +189,7 @@ app.post('/register', (req, res) => {
 			}
 			else
 				username = req.cookies.username
-			res.render('main', {'username': username, 'hide_show': hide_show})
+				res.redirect('/')
 		},
 		function(reject0)
 		{
@@ -203,7 +203,7 @@ app.post('/register', (req, res) => {
 			}
 			else
 				username = req.cookies.username
-			res.render('main', {'username': username, 'hide_show': hide_show})
+			res.render('glowna', {'username': username, 'hide_show': hide_show})
 		}
 	)
 })
@@ -218,6 +218,10 @@ function hash(x)
 	i = i % 234323
 	return i
 }
+
+
+
+
 
 
 app.get('/admin', function (request, response) {
@@ -235,11 +239,14 @@ app.get('/', (req, res) =>
 		res.cookie('username', username)
 	}
 	else
+	{
 		username = req.cookies.username
-	res.render('main', {'username': username, 'hide_show': hide_show})
+		hide_show.zalogowanie = "zalogowany"
+	}
+	res.render('glowna', {'username': username, 'hide_show': hide_show})
 })
 
-app.get('/roomsList', (req, res) =>
+app.get('/roomsList', authorize, (req, res) =>
 {
 	res.render('roomsList', {'rooms': rooms, 'username': req.cookies.username})
 })
@@ -250,7 +257,7 @@ app.get('/changeUsername', (req, res) =>
 	res.redirect(req.query.returnUrl)
 })
 
-app.get('/createRoom', (req, res) =>
+app.get('/createRoom', authorize, (req, res) =>
 {
 	console.log('Created room: ' + req.query.name)
 
@@ -266,6 +273,93 @@ app.get('/rooms/:id', (req, res) =>
 	else
 		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.cookies.username})
 })
+
+app.post('/logIn', (req, res) =>
+{
+	var hide_show = {};
+	hide_show.logIn_menu = "hide";
+	var dane = req.body;
+	console.log(req.body);
+
+	 var select_promise = new Promise(function (resolve0, reject0){
+		 var rows;
+			 pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+			client.query('SELECT password FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
+			  done();
+			  if (err)
+			   { console.error(err); response.send("Error " + err); reject(true); }
+			   else {
+				   console.log("result");
+				   console.log(result);
+				   rows = result.rows;
+				   console.log("result.rows");
+				   console.log(rows);
+					   resolve(rows);
+			   }
+
+			});
+		});
+	})
+
+	select_promise.then(
+		function(resolve0)
+		{
+			if (resolve0[0] == hash(dane.haslo))
+			{
+				req.session.username = req.body.nazwa
+				var username
+				if (!req.cookies.username)
+				{
+					username = 'Anonimowy'
+					res.cookie('username', username)
+				}
+				else
+					username = req.cookies.username
+				res.redirect('/')
+
+			}
+			else {
+
+
+				hide_show.logowanie_menu = "show_with_error"
+				res.render('glowna', {'username': username, 'hide_show': hide_show})
+			}
+
+
+		},
+		function(reject0)
+		{
+			hide_show.logIn_menu = "show_with_error"
+			console.log("Ujojoj");
+			var username
+			if (!req.cookies.username)
+			{
+				username = 'Anonimowy'
+				res.cookie('username', username)
+			}
+			else
+				username = req.cookies.username
+			res.render('glowna', {'username': username, 'hide_show': hide_show})
+		}
+	)
+
+})
+
+function authorize(req, res, next)
+{
+
+	if (req.session.username)
+		next()
+	else
+		res.redirect('/admin')
+}
+
+app.get("/wyloguj", function (req, res)
+{
+	req.session.username = ""
+	res.redirect('/')
+})
+
 
 io.on('connection', function(socket)
 {
