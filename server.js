@@ -129,7 +129,7 @@ app.post('/', (req, res) => {
 								console.log("resolve in second then")
 								console.log(resolve);
 								pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-									   client.query("INSERT INTO users VALUES ($1, $2, 3);", [my_id_key, dane.nazwa], function(err, result) {
+									   client.query("INSERT INTO users VALUES ($1, $2, $3);", [my_id_key, dane.nazwa, hash(dane.password)], function(err, result) {
 											done();
 											if (err)
 											 { console.error(err); }
@@ -203,12 +203,21 @@ app.post('/', (req, res) => {
 			}
 			else
 				username = req.cookies.username
-			res.render('glowna', {'username': username, 'hide_show': hide_show})
+			res.render('main', {'username': username, 'hide_show': hide_show})
 		}
 	)
 })
 
-
+function hash(x)
+{
+	var i = 1
+	for(c of x)
+	{
+		i = i + (c.charCodeAt(0) * 45234131) % 343243
+	}
+	i = i % 234323
+	return i
+}
 
 
 app.get('/admin', function (request, response) {
