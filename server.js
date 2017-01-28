@@ -307,7 +307,10 @@ app.post('/logIn', (req, res) =>
 	select_promise.then(
 		function(resolve0)
 		{
-			if (resolve0[0] == hash(dane.haslo))
+			console.log(resolve0.password);
+			console.log(dane.haslo)
+			console.log(hash(dane.haslo))
+			if (resolve0.password == hash(dane.haslo))
 			{
 				req.session.username = req.body.nazwa
 				var username
