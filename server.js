@@ -129,7 +129,7 @@ app.post('/', (req, res) => {
 								console.log("resolve in second then")
 								console.log(resolve);
 								pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-									   client.query("INSERT INTO users VALUES ($1, $2, $3);", [my_id_key, dane.nazwa, hash(dane.password)], function(err, result) {
+									   client.query("INSERT INTO users VALUES ($1, $2, $3);", [my_id_key, dane.nazwa, hash(dane.haslo)], function(err, result) {
 											done();
 											if (err)
 											 { console.error(err); }
