@@ -17,7 +17,9 @@
 		<tr>
 		<td> <%= i+1 %> </td>
 		<td> <%= rooms[i].name %> </td>
-		<td> <a href="rooms/<%= i %>" > Dołącz </a> </td>
+		<td> 
+		<a href="rooms/<%= i %>" > Dołącz </a>
+		</td>
 		
 		</tr>
 	<% } %>
