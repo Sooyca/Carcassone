@@ -8,7 +8,7 @@
 	<script>
 		$(document).ready(function(){
 			console.log("hide_show.register_menu")
-			if(hide_show.register_menu != "show_with_error")
+			if("<%= hide_show.register_menu %>" != "show_with_error")
 				{$("#rejestracja_blad").hide();}
 			$("#rejestracja_formularz").hide();
 			$("#rejestracja_przycisk").click(function(){
