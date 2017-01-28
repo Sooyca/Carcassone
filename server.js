@@ -25,7 +25,7 @@ app.use(session(
 	saveUninitialized: true
 }))
 
-
+/*
 
 var pg = require('pg');
 
@@ -203,13 +203,13 @@ app.post('/', (req, res) => {
 			}
 			else
 				username = req.cookies.username
-			res.render('main', {'username': username, 'hide_show': hide_show})
+			res.render('glowna', {'username': username, 'hide_show': hide_show})
 		}
 	)
 })
 
 
-
+*/
 
 app.get('/admin', function (request, response) {
 	response.render('security')
@@ -227,7 +227,7 @@ app.get('/', (req, res) =>
 	}
 	else
 		username = req.cookies.username
-	res.render('main', {'username': username, 'hide_show': hide_show})
+	res.render('glowna', {'username': username, 'hide_show': hide_show})
 })
 
 app.get('/roomsList', (req, res) =>
