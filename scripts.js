@@ -17,6 +17,11 @@ function logOut()
 	window.location.assign('/wyloguj')
 }
 
+function wyniki()
+{
+	window.location.assing('/wyniki')
+}
+
 function logIn()
 {
 
