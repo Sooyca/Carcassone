@@ -364,7 +364,7 @@ function authorize(req, res, next)
 app.get("/wyniki", authorize, function(req, res){
 	var username = req.session.username
 	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-	  client.query('SELECT * FROM games WHERE ;', [username] function(err, result) {
+	  client.query('SELECT * FROM games WHERE ;', [username], function(err, result) {
 	    done();
 	    if (err)
 	     { console.error(err); res.send("Error " + err); }
