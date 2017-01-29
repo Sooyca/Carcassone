@@ -19,7 +19,11 @@ function logOut()
 
 function wyniki()
 {
-	window.location.assing('/wyniki')
+	window.location.assign('/wyniki')
+}
+
+function roomList(){
+	window.location.assign('/roomsList')
 }
 
 function logIn()
