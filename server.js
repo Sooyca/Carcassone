@@ -37,8 +37,6 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
   client
     .query('SELECT table_schema,table_name FROM information_schema.tables;')
     .on('row', function(row) {
-		console.log("Database url")
-		console.log(process.env.DATABASE_URL)
       console.log(JSON.stringify(row));
     });
 });
