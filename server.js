@@ -552,7 +552,7 @@ console.log('server started')
 
 
 
-var colors = ["../red.jpg", "../blue.jpg", "../yellow.jpg", "../green.jpg", "../black.jpg", "../white.jpg"]
+var colors = ["../red.png", "../blue.png", "../yellow.png", "../green.png", "../black.png", "../white.png"]
 
 
 var town = 2

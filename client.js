@@ -5,12 +5,22 @@ var id
 var socket = io()
 
 var bnd = new Image()
+bnd.onload = (function() {
+	console.log(bnd.src)
+	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
+})
 bnd.src = "../tlo2.png"
 
 document.addEventListener("DOMContentLoaded", function()
 {
 	canvas = document.getElementById("mainCanvas")
 	smallCanvas = document.getElementById("smallCanvas")
+	var empty = new Image()
+	empty.onload = (function() {
+		console.log(empty.src)
+		smallCanvas.getContext("2d").drawImage(empty, 0, 0, smallCanvas.width, smallCanvas.height)
+	})
+	empty.src = "../klocek.png"
 	var rect = canvas.getBoundingClientRect()
 	canvasSize = canvas.width
 	ctx = canvas.getContext("2d")
@@ -57,7 +67,7 @@ socket.on('id', function(data)
 socket.on('newgame', function()
 {
 	ctx.clearRect(0, 0, canvasSize, canvasSize)
-	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
+	//ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 	/*
   	window.addEventListener('click', function (e) {
 		// wyślij sygnał: getClick(e)
@@ -69,25 +79,36 @@ socket.on('newgame', function()
 socket.on('drawPiece', function(data) {
 	var x = data.pos.x, y = data.pos.y
 	var img = new Image()
-	img.onload = (function() {
-	console.log(img)
-	var k = data.piece.rotation
-	if(k%4 == 0)
-	{
-		ctx.drawImage(img, x, y, gridSize, gridSize)
-		//ctx.drawImage(img, x, y)
-		console.log(data.piece.rotation)
-	}
-	else
-	{
-		ctx.save()
-		ctx.translate(x+gridSize/2, y+gridSize/2)
-		ctx.rotate(k*Math.PI/2)
-		ctx.drawImage(img, gridSize/(-2), gridSize/(-2), gridSize, gridSize)
-		ctx.restore()
-	}
+	var empty = new Image()
+	empty.onload = (function() {
+		ctx.drawImage(empty, x, y, gridSize, gridSize)
+		img.onload = (function() {
+			console.log(img)
+			var k = data.piece.rotation
+			if(k%4 == 0)
+			{
+				ctx.drawImage(img, x + 22/1077 * gridSize, y + 3/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
+				//ctx.drawImage(img, x, y)
+				console.log(data.piece.rotation)
+			}
+			else
+			{
+				ctx.save()
+				ctx.translate(x+gridSize/2, y+gridSize/2)
+				ctx.rotate(k*Math.PI/2)
+				if (k%4 == 1)
+					ctx.drawImage(img, gridSize/(-2) + 3/1077 * gridSize, gridSize/(-2) - 22/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
+				else if (k%4 == 2)
+					ctx.drawImage(img, gridSize/(-2) - 22/1077 * gridSize, gridSize/(-2) - 3/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
+				else
+				 	ctx.drawImage(img, gridSize/(-2) - 3/1077 * gridSize, gridSize/(-2) + 22/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
+				ctx.restore()
+			}
+		})
+		img.src = data.piece.img
+
 	})
-	img.src = data.piece.img
+	img.src = "../klocek.png"
 })
 
 socket.on('drawMan', function(data) {

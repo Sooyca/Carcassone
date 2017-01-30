@@ -22,7 +22,6 @@ header {
     clear: left;
     text-align: center;
     height: 15%;
-	background-image: url("../deska.jpg");
     margin: 0px
 }
 
@@ -58,6 +57,15 @@ div.board {
     height: 85%;
     margin-right: 25%
 }
+
+.przycisk {
+	box-shadow: 0 9px #999;
+}
+
+.przycisk:active {
+	box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
 </style>
 </head>
 
@@ -72,18 +80,20 @@ div.board {
 </header>
 
 <div id="menu" class = "menu" >
-	<div style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
-	<button type="button" onclick="rotate(1)"> <img id = lewo src = "../lewo.png" height=50> </button>
+	<div class="przycisk" style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
+	<img  onclick="rotate(1)" src = "../lewo.png" height=50>
 	</div>
-	<div style="float: left; width=50%">
+		<div style="float: left; width=50%">
 	<canvas id="smallCanvas" style="margin-top: 2em"></canvas>
 	</div>
-	<div style="float: left; width=25%; margin-top: 8em; margin-left: 2em">
-	<button type="button" onclick="rotate(-1)"> <img id = prawo src = "../prawo.png" height=50> </button>
+	<div class="przycisk" style="float: left; width=25%; margin-top: 8em; margin-left: 2em">
+		<img  onclick="rotate(-1)" src = "../prawo.png" height=50>
 	</div>
-	<div>
-	<button id="newGameButton" onclick="newGame()" style="display:none;"> <img src = "../nowagra.png" width=50></button>
-	<button id="passButton" onclick="endTurn()"><img src="../koniectury" width=50></button>
+	<div class="przycisk">
+		<img id="newGameButton" onclick="newGame()" style="display:none;" src = "../nowagra.png" width=100>
+	</div>
+	<div class="przycisk">
+		<img  onclick="endTurn()" src="../koniectury.png" width=100>
 	</div>
 	<div id="stats">
 	</div>
