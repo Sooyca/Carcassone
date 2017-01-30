@@ -5,9 +5,17 @@ function createRoom()
 		window.location.assign('/createRoom?name=' + name)
 }
 
-function changeUsername()
+
+function logOut()
 {
-	var newUsername = prompt("Podaj nową nazwę użytkownika")
-	if (newUsername != null && newUsername != '')
-		window.location.assign('/changeUsername?returnUrl=' + window.location.href + '&newUsername=' + newUsername)
+	window.location.assign('/wyloguj')
+}
+
+function wyniki()
+{
+	window.location.assign('/wyniki')
+}
+
+function roomList(){
+	window.location.assign('/roomsList')
 }

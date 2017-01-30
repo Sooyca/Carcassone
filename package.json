@@ -5,7 +5,7 @@
   "main": "client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node game.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,16 @@
   "bugs": {
     "url": "https://github.com/Sooyca/Carcassone/issues"
   },
-  "homepage": "https://github.com/Sooyca/Carcassone#readme"
+  "homepage": "https://github.com/Sooyca/Carcassone#readme",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.5.5",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "pg": "6.1.2",
+    "socket.io": "^1.7.2"
+  }
 }

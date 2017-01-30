@@ -6,15 +6,12 @@ var session = require('express-session')
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser');
 
-
 var app = express()
 var server = http.createServer(app)
 var io = socket(server)
 var cnt = 0
 var rooms = []
 var users = {}
-
-console.log(engine.startPiece);
 
 app.set('view engine', 'ejs')
 app.set('views', './')
@@ -29,31 +26,222 @@ app.use(session(
 }))
 
 
+
+var pg = require('pg');
+
+pg.defaults.ssl = true;
+pg.connect(process.env.DATABASE_URL, function(err, client) {
+  if (err) throw err;
+  console.log('Connected to postgres! Getting schemas...');
+
+  client
+    .query('SELECT table_schema,table_name FROM information_schema.tables;')
+    .on('row', function(row) {
+      console.log(JSON.stringify(row));
+    });
+});
+
+
+app.get('/db', function (request, response) {
+	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+	  client.query('SELECT * FROM users;', function(err, result) {
+	    done();
+	    if (err)
+	     { console.error(err); response.send("Error " + err); }
+	    else
+	     {    console.log("snhgnhunagsnueicnrawigy7bawnigawgrsv");
+	          result.rows.forEach(
+	              r => {
+	                  console.log(r.name);
+	              }
+	          );
+
+	          response.render('views/pages/db', {results: result.rows} ); }
+	  });
+	});
+});
+
+app.post('/register', (req, res) => {
+	var hide_show = {};
+	hide_show.register_menu = "hide";
+	var register_promise = new Promise(
+		function(resolve0, reject0)
+		{
+			try
+			{
+				var dane = req.body;
+				console.log(req.body);
+
+				 var select_promise = new Promise(function (resolve, reject){
+					 var rows;
+						 pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+						client.query('SELECT name FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
+						  done();
+						  if (err)
+						   { console.error(err); response.send("Error " + err); }
+						   else {
+							   console.log("result");
+							   console.log(result);
+							   rows = result.rows;
+							   console.log("result.rows");
+							   console.log(rows);
+								   resolve(rows);
+						   }
+
+						});
+					});
+
+				})
+
+				select_promise.then(
+					function(resolve)
+					{
+						let i = 0;
+						resolve.forEach(
+							r => {
+								i = i + 1;
+							}
+						);
+						console.log("przed przed wpisaniem")
+						console.log(i);
+						console.log(resolve);
+
+						if(i == 0)
+						{
+							console.log("przed wpisaniem")
+							var my_id_key;
+							var file_read_promise = new Promise(function(resolve, reject) {
+								fs.readFile('./data/users', 'utf-8', (err, data) =>
+							   {
+								   if (err) throw err;
+								   console.log("plik");
+								   console.log(data);
+								   my_id_key = data[0] * 1;
+								   console.log("my_id_key po przypisaniu");
+								   console.log(my_id_key)
+								   resolve(my_id_key);
+							   });
+						   })
+						   file_read_promise.then(function(resolve)
+						   {
+							   console.log("file promise then")
+								console.log(my_id_key);
+								console.log("resolve in second then")
+								console.log(resolve);
+								pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+									   client.query("INSERT INTO users VALUES ($1, $2, $3);", [my_id_key, dane.nazwa, hash(dane.haslo)], function(err, result) {
+											done();
+											if (err)
+											 { console.error(err); }
+											else
+											{
+												my_id_key = my_id_key + 1;
+												fs.writeFile('./data/users', my_id_key, function(err) {
+													if(err) {
+														return console.log(err);
+													}
+												});
+												console.log('Dodano nowego użytkownika');
+												resolve0(true);
+											}
+											});
+									});
+								},
+								function(reject)
+								{
+									console.log("Błąd odczytu pliku.")
+								}
+						)
+						}
+						else
+						{
+								//.alert("Nazwa użytkownika jest zajęta;")
+								console.log("wolne nie true");
+								reject0(true)
+						}
+					},
+					function(err)
+					{
+						console.log("Błąd")
+						console.log(resolve);
+					}
+				)
+			}
+			catch(err)
+			{
+				console.log(err);
+				//window.alert("Coś nie zadziałało. Jesli ciekawi Cię ztrona techniczna, to na konsoli wyświtla się to: \n" + err);
+			}
+		}
+	);
+	register_promise.then(
+		function(resolve0)
+		{
+			res.redirect('/')
+		},
+		function(reject0)
+		{
+			hide_show.register_menu = "show_with_error"
+			console.log("Ujojoj");
+			var username
+			if (!req.session.username)
+			{
+				username = 'Anonimowy'
+			}
+			else
+				username = req.session.username
+			res.render('glowna', {'username': username, 'hide_show': hide_show})
+		}
+	)
+})
+
+function hash(x)
+{
+	var i = 1
+	for(c of x)
+	{
+		i = i + (c.charCodeAt(0) * 45234131) % 343243
+	}
+	i = i % 234323
+	return i
+}
+
+
+
+
+
+
+app.get('/admin', function (request, response) {
+	response.render('security')
+});
+
 app.get('/', (req, res) =>
 {
+    var hide_show = {};
+    hide_show.register_menu = "hide";
+	hide_show.logIn_menu = "hide"
+	hide_show.zalogowanie = "nie"
 	var username
-	if (!req.cookies.username)
+	if (!req.session.username)
 	{
 		username = 'Anonimowy'
-		res.cookie('username', username)
 	}
 	else
-		username = req.cookies.username
-	res.render('main', {'username': username})
+	{
+		username = req.session.username
+		hide_show.zalogowanie = "zalogowany"
+	}
+	console.log(hide_show.zalogowanie)
+	res.render('glowna', {'username': username, 'hide_show': hide_show})
 })
 
-app.get('/roomsList', (req, res) =>
+app.get('/roomsList', authorize, (req, res) =>
 {
-	res.render('roomsList', {'rooms': rooms, 'username': req.cookies.username})
+	res.render('roomsList', {'rooms': rooms, 'username': req.session.username})
 })
 
-app.get('/changeUsername', (req, res) =>
-{
-	res.cookie('username', req.query.newUsername)
-	res.redirect(req.query.returnUrl)
-})
 
-app.get('/createRoom', (req, res) =>
+app.get('/createRoom', authorize, (req, res) =>
 {
 	console.log('Created room: ' + req.query.name)
 
@@ -67,8 +255,117 @@ app.get('/rooms/:id', (req, res) =>
 	if (rooms[id].players.length >= 6)
 		res.redirect('/roomsList')
 	else
-		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.cookies.username})
+		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.session.username})
 })
+
+app.post('/logIn', (req, res) =>
+{
+	var hide_show = {};
+	hide_show.logIn_menu = "hide";
+	var dane = req.body;
+	console.log(req.body);
+
+	 var select_promise = new Promise(function (resolve0, reject0){
+		 var rows;
+			 pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+			client.query('SELECT password FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
+			  done();
+			  if (err)
+			   { console.error(err); res.send("Error " + err); reject0(true); }
+			   else {
+				   console.log("result");
+				   console.log(result);
+				   rows = result.rows;
+				   console.log("result.rows");
+				   console.log(rows);
+					   resolve0(rows);
+			   }
+
+			});
+		});
+	})
+
+	select_promise.then(
+		function(resolve0)
+		{
+			console.log(resolve0[0].password);
+			console.log(dane.haslo)
+			console.log(hash(dane.haslo))
+			if (resolve0[0].password == hash(dane.haslo))
+			{
+				req.session.username = req.body.nazwa
+				var username
+				if (!req.session.username)
+				{
+					username = 'Anonimowy'
+				}
+				else
+					username = req.session.username
+				res.redirect('/')
+
+			}
+			else {
+
+
+				hide_show.logowanie_menu = "show_with_error"
+				res.render('glowna', {'username': username, 'hide_show': hide_show})
+			}
+
+
+		},
+		function(reject0)
+		{
+			hide_show.logIn_menu = "show_with_error"
+			console.log("Ujojoj");
+			var username
+			if (!req.session.username)
+			{
+				username = 'Anonimowy'
+			}
+			else
+				username = req.session.username
+			res.render('glowna', {'username': username, 'hide_show': hide_show})
+		}
+	)
+
+})
+
+function authorize(req, res, next)
+{
+
+	if (req.session.username)
+		next()
+	else
+		res.redirect('/admin')
+}
+
+
+app.get("/wyniki", authorize, function(req, res){
+	var username = req.session.username
+	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+	  client.query('SELECT * FROM games WHERE ;', [username], function(err, result) {
+	    done();
+	    if (err)
+	     { console.error(err); res.send("Error " + err); }
+	    else
+	     {    console.log("jddfykf");
+	          result.rows.forEach(
+	              r => {
+	                  console.log(r.name);
+	              }
+	          );
+
+	          response.render('wyniki', {results: result.rows} ); }
+	  });
+	});
+})
+
+app.get("/wyloguj", function (req, res)
+{
+	req.session.username = ""
+	res.redirect('/')
+})
+
 
 io.on('connection', function(socket)
 {
@@ -136,28 +433,6 @@ io.on('connection', function(socket)
 
 server.listen( process.env.PORT || 5000)
 console.log('server started')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -232,6 +507,7 @@ function getClick(e) {
 				currY = Math.floor(yCoo)
 				addPiece(randPiece, currX, currY, currRotation)
 			}
+		}
 }
 
 function boardToCanvas(x) {

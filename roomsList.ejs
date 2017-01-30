@@ -4,12 +4,11 @@
 <script src="/scripts.js"></script>
 </head>
 <body>
-	<table width="100%" border="0" style="table-layout:fixed;"> <tr> 
-		<td valign="top" style="text-align:left;"> <a href="/"> Powrót </a> </td> 
-		<td style="text-align:center;"> <h1> Pokoje </h1> </td>
-		<td valign="top" style="text-align:right;"> <a href="#" onclick="changeUsername()"> <%= username %> </a> </td>  
+	<table width="100%" border="0" style="table-layout:fixed;"> <tr>
+		<td valign="top" style="text-align:left;"> <a href="/"> Powrót </a> </td>
+		<td style="text-align:center;"> <h1> Pokoje </h1> </td> 
 	</tr> </table>
-	
+
 	<div align="center">
 	<table>
 	<% for (var i = 0; i < rooms.length; i++)
@@ -17,18 +16,17 @@
 		<tr>
 		<td> <%= i+1 %> </td>
 		<td> <%= rooms[i].name %> </td>
-		<td> 
-		<% if (rooms[i].players.length < 2) { %> 
+		<td>
+		<% if (rooms[i].players.length < 2) { %>
 			<a href="rooms/<%= i %>" > Dołącz </a>
 		<% } %>
 		</td>
-		
+
 		</tr>
 	<% } %>
-	</table>	
+	</table>
 	</div>
 
-	
+
 </body>
 </html>
-
