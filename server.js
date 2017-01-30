@@ -259,7 +259,7 @@ app.get('/createRoom', authorize, (req, res) =>
 		rooms.push({})
 		pos = rooms.length - 1
 	}
-	rooms.[pos] = {
+	rooms[pos] = {
 		'name': req.query.name,
 		'players': {},
 		'playersCnt': 0,
