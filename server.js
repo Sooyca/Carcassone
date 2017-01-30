@@ -6,12 +6,13 @@ var session = require('express-session')
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser');
 
+var boardSize = 10
 var app = express()
 var server = http.createServer(app)
 var io = socket(server)
 var cnt = 0
 var rooms = []
-var users = {}
+var roomNumber = {}
 
 app.set('view engine', 'ejs')
 app.set('views', './')
