@@ -1,7 +1,7 @@
 function createRoom()
 {
 	var name = prompt("Wpisz nazwę pokoju")
-	if (name != null && name != '')
+	if (name != null && name != '' && name.length < 30)
 		window.location.assign('/createRoom?name=' + name)
 }
 
@@ -16,6 +16,6 @@ function wyniki()
 	window.location.assign('/wyniki')
 }
 
-function roomList(){
-	window.location.assign('/roomsList')
+function roomsListCarcassonne(){
+	window.location.assign('/roomsListCarcassonne')
 }

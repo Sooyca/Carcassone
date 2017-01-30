@@ -235,9 +235,9 @@ app.get('/', (req, res) =>
 	res.render('glowna', {'username': username, 'hide_show': hide_show})
 })
 
-app.get('/roomsList', authorize, (req, res) =>
+app.get('/roomsListCarcassonne', authorize, (req, res) =>
 {
-	res.render('roomsList', {'rooms': rooms, 'username': req.session.username})
+	res.render('roomsListCarcassonne', {'rooms': rooms, 'username': req.session.username})
 })
 
 
@@ -245,7 +245,24 @@ app.get('/createRoom', authorize, (req, res) =>
 {
 	console.log('Created room: ' + req.query.name)
 
-	rooms.push({'name': req.query.name, 'players': [], 'board': []})
+	rooms.push({
+		'name': req.query.name,
+		'players': {},
+		'playersCnt': 0,
+		'board': [],
+		'turn': -1,
+		'segments' : [{'type' : field}],
+		'randPiece': startPiece,
+		'currX': 0,
+		'currY': 0,
+		'rotation': 0,
+		'gameOn': false,
+		'southBorder': Math.floor(boardSize/2),
+		'northBorder': Math.floor(boardSize/2),
+		'westBorder': Math.floor(boardSize/2),
+		'eastBorder': Math.floor(boardSize/2),
+		'pieces': createPieces()
+	})
 	res.redirect('/rooms/' + (rooms.length - 1))
 })
 
@@ -370,152 +387,293 @@ app.get("/wyloguj", function (req, res)
 io.on('connection', function(socket)
 {
     console.log('Client connected: ' + socket.id)
-    /*
-    socket.emit('id', cnt++)
-    if (cnt == 2)
-    {
-    	io.emit('start', {'id': Math.floor(2*Math.random())})
-    }
-    */
+
+	socket.on('join', function(data)
+	{
+		var id = rooms[data.roomNo].playersCnt
+		socket.emit('id', id)
+		////console.log(data)
+		rooms[data.roomNo].players[socket.id] = {
+			'socket': socket,
+			'color': colors[id],
+			'pieces': 8,
+			'roomNo': data.roomNo,
+			'id': id,
+			'mayAddMan': false,
+			'canvas': data.canvas,
+			'points': 0
+		}
+		rooms[data.roomNo].playersCnt++
+		//console.log(data.roomNo)
+		roomNumber[socket.id] = data.roomNo
+
+	})
+
     socket.on('newgame', function()
     {
-    	var roomNo = users[socket.id]
-
-    	//console.log(emptyBoard)
-    	for (var i = 0; i < rooms[roomNo].players.length; i++)
-    		rooms[roomNo].players[i].emit('newgame')
-    	//io.emit('newgame')
+    	var roomNo = roomNumber[socket.id]
+    	var room = rooms[roomNo]
+    	if (room.gameOn) return
+    	if (room.players[socket.id].id != 0)
+    		return
+    	room.board = []
+    	room.turn = 0
+    	room.segments = [{type : field}]
+    	room.randPiece = startPiece
+    	room.rotation = 0
+    	room.gameOn = true
+    	room.southBorder = room.northBorder = room.westBorder = room.eastBorder = Math.floor(boardSize/2)
+    	room.pieces = createPieces()
+		for (var i in room.players)
+		{
+			room.players[i].pieces = 8
+			room.players[i].points = 0
+			room.players[i].mayAddMan = false
+		}
+		update(room)
+    	var r = Math.floor(room.pieces.length * Math.random())
+    	var x = Math.floor(boardSize/2)
+    	var y = Math.floor(boardSize/2)
+		room.randPiece = room.pieces[r]
+		room.currPiece = new drawnPiece(startPiece, x, y, 0)
+    	room.board[y*boardSize + x] = room.currPiece
+		checkAssign(room.currPiece, x, y, room)
+    	for (var i in rooms[roomNo].players)
+    	{
+    		room.players[i].socket.emit('newgame')
+    	}
+		for (var i in room.players)
+		{
+			room.players[i].socket.emit('drawPiece', {'piece': {'img': room.currPiece.img, 'rotation': room.currPiece.rotation}, 'pos': boardToCanvas(x, y, room.players[i].canvas)})
+			room.players[i].socket.emit('newPiece', room.randPiece)
+		}
     })
-    socket.on('move', function(data)
+
+    socket.on('click', function(e)
     {
-    	var roomNo = users[socket.id]
-    	rooms[roomNo].board[data.x][data.y] = data.id
-    	//console.log(emptyBoard)
-    	for (var i = 0; i < rooms[roomNo].players.length; i++)
-    		rooms[roomNo].players[i].emit('move', {'board': rooms[roomNo].board, 'id': data.id})
-    	//io.emit('move', {'id': data.id, 'x': data.x, 'y': data.y})
-    })
-	socket.on('join', function(roomNo)
-	{
-		socket.emit('id', rooms[roomNo].players.length)
-		rooms[roomNo].players.push(socket)
-		users[socket.id] = roomNo
-
-	})
-	socket.on('disconnect', function()
-	{
-		console.log('Client disconnected: ' + socket.id)
-		var roomNo = -1
-		for (var i = 0; i < rooms.length; i++)
-			for (var j = 0; j < rooms[i].players.length; j++)
-				if (rooms[i].players[j] == socket)
-				{
-					rooms[i].players.splice(j, 1)
-					roomNo = i
+    	var roomNo = roomNumber[socket.id]
+    	////console.log(roomNo)
+    	var room = rooms[roomNo]
+    	var player = room.players[socket.id]
+    	//player.socket.emit('drawPiece', {'piece': startPiece, 'pos': {'x': 500, 'y': 500}})
+    	var myTurn = (room.turn == room.players[socket.id].id)
+   // 	console.log(room.turn)
+    	//console.log(myTurn)
+    	var mayAddMan = player.mayAddMan
+		if(myTurn && room.gameOn)
+		{
+			var coo = canvasToBoard(e, player.canvas)
+			if(mayAddMan)
+			{
+				if(Math.floor(coo.x) == room.currX && Math.floor(coo.y) == room.currY) {
+					var x1 = coo.x - room.currX - 0.5
+					var y1 = coo.y - room.currY - 0.5
+					if (x1-y1 > 0 && x1+y1 > 0) {
+						if(room.currPiece[east].piece.type == field && room.currPiece.cloister)
+							addOwner(room.currPiece,room.currX + 0.5, room.currY + 0.5, player, room)
+						else
+							addOwner(room.currPiece[east], room.currX + 0.8, room.currY + 0.5, player, room)
+					}
+					else if(x1-y1 > 0 && x1+y1 < 0){
+						if(room.currPiece[north].piece.type == field && room.currPiece.cloister)
+							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+						else
+							addOwner(room.currPiece[north], room.currX + 0.5, room.currY + 0.2, player, room)
+					}
+					else if(x1-y1 < 0 && x1+y1 > 0){
+						if(room.currPiece[south].piece.type == field && room.currPiece.cloister)
+							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+						else
+							addOwner(room.currPiece[south], room.currX + 0.5, room.currY + 0.8, player, room)
+					}
+					else {
+						if(room.currPiece[west].piece.type == field && room.currPiece.cloister)
+							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+						else
+							addOwner(room.currPiece[west], room.currX + 0.2, room.currY + 0.5, player, room)
+					}
 				}
-		if (roomNo != -1 && rooms[roomNo].players.length == 0)
-		{
-			//rooms[roomNo].players[0].emit('newgame')
-			rooms[roomNo].board = [[-1, -1, -1],
-				 			      [-1, -1, -1],
-			    			      [-1, -1, -1]]
-			//rooms[roomNo].players[0].emit('id', rooms[roomNo].players.length - 1)
+			}
+			else
+			{
+				room.currX = Math.floor(coo.x)
+				room.currY = Math.floor(coo.y)
+				addPiece(room.randPiece, room.currX, room.currY, room.rotation, room, player)
+			}
 		}
-		else if (roomNo != -1 && rooms[roomNo].players.length > 0)
-		{
-			rooms[roomNo].players[0].emit('withdrawal')
-			rooms[roomNo].players[0].emit('id', rooms[roomNo].players.length - 1)
-		}
-		delete users.socket
+	})
+
+	socket.on('endturn', function()
+	{
+		var roomNo = roomNumber[socket.id]
+		var room = rooms[roomNo]
+		var player = room.players[socket.id]
+		endTurn(room, player)
+	})
+
+	socket.on('rotate', function(r)
+	{
+		var roomNo = roomNumber[socket.id]
+		var room = rooms[roomNo]
+		var myTurn = (room.turn == room.players[socket.id].id)
+		if (!myTurn) return
+		for (var i in room.players)
+			room.players[i].socket.emit('rotate', r)
+		room.rotation += 4+r
 	})
 })
-
 
 server.listen( process.env.PORT || 5000)
 console.log('server started')
 
 
 
-
-var canvasSize = 1000
-var boardSize = 10
-var gridSize = canvasSize/boardSize
-var manSize = gridSize/4
-var board = []
-var players = []
-var colors = ["red", "blue", "yellow", "green", "black", "white"]
+var colors = ["../red.jpg", "../blue.jpg", "../yellow.jpg", "../green.jpg", "../black.jpg", "../white.jpg"]
 
 
 var town = 2
 var road = 1
 var field = 0
-
-var segments = [{type : field}]
+var monk = 3
 
 var north = 0, east = 1, south = 2, west = 3
 
-var northBorder = 32
-var southBorder = 32
-var eastBorder = 32
-var westBorder = 32
+var northBorder = Math.floor(boardSize/2)
+var southBorder = Math.floor(boardSize/2)
+var eastBorder = Math.floor(boardSize/2)
+var westBorder = Math.floor(boardSize/2)
 
 var townAlone = new createSubPiece(town, [])
-var townLeft = new createSubPiece(town, [-1])
-var townRight = new createSubPiece(town, [1])
+var townLeft = new createSubPiece(town, [1])
+var townRight = new createSubPiece(town, [-1])
 var townSides = new createSubPiece(town, [-1, 1])
 var townFull = new createSubPiece(town, [-1, 1, 2])
+var townStraight = new createSubPiece(town, [2])
 
 var roadEnd = new createSubPiece(road, [])
-var roadLeftTurn = new createSubPiece(road, [1])
-var roadRightTurn = new createSubPiece(road, [-1])
+var roadLeft = new createSubPiece(road, [1])
+var roadRight = new createSubPiece(road, [-1])
 var roadStraight = new createSubPiece(road, [2])
 
 var fieldAlone = new createSubPiece(field, [])
 
-var currPiece, currX, currY, currRotation, randPiece, currPlayer
-var mayAddMan = false
-var myTurn = true
+//var currPiece, currX, currY, currPlayer
+var currRotation, randPiece
 currRotation = 0
 
 
-var startPiece = new createPiece(townAlone, roadStraight, fieldAlone, roadStraight, "start.jpg")
-//randPiece = startPiece
+var startPiece = new createPiece(townAlone, roadStraight, fieldAlone, roadStraight, "../start.jpg")
+randPiece = startPiece
 
-function getClick(e) {
-	if(e.button == 2 && myTurn)
-		endTurn()
-	else
-		if(myTurn) {
-			var xCoo = canvasToBoard(e.clientX)
-			var yCoo = canvasToBoard(e.clientY)
-			if(mayAddMan) {
-				if(Math.abs(yCoo - currY) < Math.abs(xCoo - currX)) {
-					if(currX <= xCoo && currX + 0.5 > xCoo) // lewa
-						addOwner(currPiece, boardToCanvas(currX + 0.25), boardToCanvas(currY + 0.5))
-					else if (currX + 1 <= xCoo && currX + 0.5 < xCoo) //prawa
-						addOwner(currPiece, boardToCanvas(currX + 0.75), boardToCanvas(currY + 0.5))
-				}
-				else if(Math.abs(xCoo - currX) < Math.abs(yCoo - currY)) {
-					if(currY <= yCoo && currY + 0.5 > yCoo) // góra
-						addOwner(currPiece, boardToCanvas(currX + 0.5), boardToCanvas(currY + 0.25))
-					else if (currY + 1 <= yCoo && currY + 0.5 < yCoo) //dół
-						addOwner(currPiece, boardToCanvas(currX + 0.5), boardToCanvas(currY + 0.75))
-				}
-			}
-			else {
-				currX = Math.floor(xCoo)
-				currY = Math.floor(yCoo)
-				addPiece(randPiece, currX, currY, currRotation)
-			}
-		}
+function createPieces()
+{
+	var pieces = []
+/*
+	for(var i=0; i<4; i++) {
+		pieces.push(new createPiece(fieldAlone, fieldAlone, fieldAlone, fieldAlone, "../cloister.jpg"))
+		pieces[pieces.length-1].cloister = true
+	}
+	for(var i=0; i<2; i++) {
+		pieces.push(new createPiece(fieldAlone, fieldAlone, roadEnd, fieldAlone, "../cloisterWithRoad.jpg"))
+		pieces[pieces.length-1].cloister = true
+	}
+
+	pieces.push(new createPiece(townFull, townFull, townFull, townFull, "../fullTown.jpg"))
+
+	for(var i=0; i<3; i++)
+		pieces.push(new createPiece(townSides, townRight, fieldAlone, townLeft, "../tripleTown.jpg"))
+
+	//pieces.push(new createPiece(townSidesP, townRight, fieldAlone, townLeft, "tripleTownWithP.jpg")
+	pieces.push(new createPiece(townSides, townRight, roadEnd, townLeft, "../tripleTownAndRoad.jpg"))
+
+	//for(var i=0; i<2; i++)
+	//	pieces.push(new createPiece(townSidesP, townRight, roadEnd, townLeft, "tripleTownAndRoadWithP.jpg")
+
+	for(var i=0; i<3; i++)
+		pieces.push(new createPiece(townRight, fieldAlone, fieldAlone, townLeft, "../triaTown.jpg"))
+
+	//for(var i=0; i<2; i++)
+	//	pieces.push(new createPiece(townRightP, fieldAlone, fieldAlone, townLeft, "triaTownWithP.jpg")
+
+	for(var i=0; i<3; i++)
+		pieces.push(new createPiece(townRight, roadLeft, roadRight, townLeft, "../triaTownAndRoad.jpg"))
+
+	//for(var i=0; i<2; i++)
+	//	pieces.push(new createPiece(townRightP, roadLeft, roadRight, townLeft, "triaTownAndRoadWithP.jpg")
+
+	pieces.push(new createPiece(fieldAlone, townStraight, fieldAlone, townStraight, "../straightTown.jpg"))
+
+	//for(var i=0; i<2; i++)
+	//	pieces.push(new createPiece(fieldAlone, townStraightP, fieldAlone, townStraight, "straightTownWithP.jpg")
+
+	for(var i=0; i<2; i++)
+		pieces.push(new createPiece(townAlone, fieldAlone, fieldAlone, townAlone, "../adjacentTowns.jpg"))
+
+	for(var i=0; i<3; i++)
+		pieces.push(new createPiece(townAlone, fieldAlone, townAlone, fieldAlone, "../oppositeTowns.jpg"))
+
+	for(var i=0; i<5; i++)
+		pieces.push(new createPiece(townAlone, fieldAlone, fieldAlone, fieldAlone, "../aloneTown.jpg"))
+
+	for(var i=0; i<3; i++)
+		pieces.push(new createPiece(townAlone, fieldAlone, roadLeft, roadRight, "../aloneTownWithLeftCurve.jpg"))
+
+	for(var i=0; i<3; i++)
+		pieces.push(new createPiece(townAlone, roadLeft, roadRight, fieldAlone, "../aloneTownWithRightCurve.jpg"))
+
+	for(var i=0; i<3; i++)
+		pieces.push(new createPiece(townAlone, roadEnd, roadEnd, roadEnd, "../aloneTownWithCrossing.jpg"))
+
+	for(var i=0; i<3; i++)
+		pieces.push(new createPiece(townAlone, roadStraight, fieldAlone, roadStraight, "../start.jpg"))
+*/
+
+	for(var i=0; i<8; i++)
+		pieces.push(new createPiece(roadStraight, fieldAlone, roadStraight, fieldAlone, "../straightRoad.jpg"))
+
+	for(var i=0; i<9; i++)
+		pieces.push(new createPiece(fieldAlone, fieldAlone, roadLeft, roadRight, "../curve.jpg"))
+	for(var i=0; i<4; i++)
+		pieces.push(new createPiece(fieldAlone, roadEnd, roadEnd, roadEnd, "../tripleCrossing.jpg"))
+
+	pieces.push(new createPiece(roadEnd, roadEnd, roadEnd, roadEnd, "../crossing.jpg"))
+
+	return pieces
 }
 
-function boardToCanvas(x) {
-	return canvasSize*x/boardSize
+/*
+
+	zliczać, ile ludków:
+		- w segments
+		- w podliczaniu pktów
+
+
+
+	dodać klasztory:
+		- w podliczaniu - sprawdzać, czy go zamknęliśmy przez sąsiada
+
+*/
+
+function getMousePos(evt, canvas)
+{
+	return {
+	  'x': evt.clientX - canvas.x,
+	  'y': evt.clientY - canvas.y
+	}
 }
 
-function canvasToBoard(x) {
-	return boardSize*x/canvasSize
+function boardToCanvas(x, y, canvas) {
+	return {
+		'x': canvas.size*x/boardSize,
+		'y': canvas.size*y/boardSize
+	}
+}
+
+function canvasToBoard(evt, canvas) {
+	return {
+		'x': boardSize*evt.clientX/canvas.size,
+		'y': boardSize*evt.clientY/canvas.size
+	}
 }
 
 function createSubPiece(type, connections) {
@@ -528,25 +686,17 @@ function createPiece(up, right, down, left, img) {
 	this.img = img
 }
 
-function drawnPiece(piece, x, y, rotation) {
-	this[north] = { piece : piece.subPieces[rotation%4] }
-	this[south] = { piece : piece.subPieces[(2 + rotation)%4] }
-	this[east] = { piece : piece.subPieces[(1 + rotation)%4] }
-	this[west] = { piece : piece.subPieces[(3 + rotation)%4] }
-	this.img = new Image
-	this.img.src = piece.img
+function drawnPiece(piece1, x, y, rotation) {
+	this[north] = { piece : piece1.subPieces[(4-rotation%4)%4] }
+	this[south] = { piece : piece1.subPieces[(6 - rotation%4)%4] }
+	this[east] = { piece : piece1.subPieces[(5 - rotation%4)%4] }
+	this[west] = { piece : piece1.subPieces[(7 - rotation%4)%4] }
+	this.cloister = piece1.cloister
+	this.img = piece1.img
 	this.rotation = rotation
 }
 
-function createPlayer(id, socket, roomNo) {
-	this.id = id
-	this.socket = socket
-	this.first = false
-	this.color = colors[rooms[roomNo].players.length]
-	this.pieces = 7
-}
-
-function checkAssign(piece, x, y) {
+function checkAssign(piece, x, y, room) {
 
 	for(var i=0; i<4; i++) {
 		if(piece[i].piece.type == field)
@@ -555,70 +705,98 @@ function checkAssign(piece, x, y) {
 			if(piece[i].neighbour) {
 				var a = piece[i].neighbour.assign
 				if(piece[i].assign)
-					mergeSegments(a, piece[i].assign)
+					mergeSegments(a, piece[i].assign, room)
 				else {
 					piece[i].assign = a
-					if(segments[a].parts.indexOf(y*boardSize + x) == -1) {
-						console.log(`dopisuje klocek do ${a}`)
-						segments[a].parts.push(y*boardSize + x)
-						console.log(segments[a])
+					if(room.segments[a].parts.indexOf(y*boardSize + x) == -1) {
+						room.segments[a].parts.push(y*boardSize + x)
 					}
 				}
 			}
 			for(var a of piece[i].piece.connections) {
-				var j = (i+a)%4
-				console.log(`jestem ${piece[i].piece.type} i mam polaczenie z ${piece[j].piece.type}`)
+				var j = (i+a+4)%4
 				if(piece[i].assign) {
 					if(piece[j].assign && piece[j].assign != piece[i].assign)
-						mergeSegments(piece[i].assign, piece[j].assign)
+						mergeSegments(piece[i].assign, piece[j].assign, room)
 				}
 				else piece[i].assign = piece[j].assign
 			}
 			if(!piece[i].assign) {
-				segments.push({parts : [y*boardSize + x], type : piece[i].piece.type})
-				piece[i].assign = segments.length-1
+				room.segments.push({parts : [y*boardSize + x], type : piece[i].piece.type})
+				piece[i].assign = room.segments.length-1
 			}
 		}
 	}
 }
 
-function addOwner(subPiece, x, y) {
-	if(subPiece.assign.owners) {
-		// wyślij sygnał: napisz, że nie można
+function checkCloister(room, x, y) {
+	var neigh = 0
+	for (var i = Math.max(x-1, 0); i<=Math.min(x+1, boardSize -1); i++)
+		for(var j = Math.max(y-1, 0); j<= Math.min(y+1, boardSize-1); j++)
+			if(room.board[j*boardSize + i])
+				neigh++
+	return neigh
+}
+
+function addOwner(subPiece, x, y, player, room) {
+	if(subPiece.cloister) {
+		var p = room.board[room.currY*boardSize + room.currX]
+		console.log("w addOwner")
+		console.log(p)
+		if(checkCloister(room, room.currX, room.currY) == 9) {
+			givePoints(player, 9)
+		}
+		else {
+			p.owner = player
+			room.segments.push({type: monk, owners: [player], x : room.currX, y: room.currY})
+			player.pieces--
+			for (var i in room.players) {
+				pos = boardToCanvas(x, y, player.canvas)
+				room.players[i].socket.emit('drawMan', {'color': player.color, 'x': pos.x, 'y': pos.y})
+			}
+		}
+		endTurn(room, player)
+		return
 	}
-	else {
-		subPiece.assign.owners = [currPlayer]
-		mayAddMan = false
-		console.log(`rysuje ludka na ${x}, ${y}`)
-		// wyślij sygnał: drawMan(currPlayer.color, x, y)
+	if(subPiece.piece.type == field)
+		return
+	segment = room.segments[subPiece.assign]
+	if(!segment.owners) {
+		segment.owners = [{player : player, num : 1}]
+		player.pieces--
+		if(!checkClosed(subPiece.assign, room)) {
+			for (var i in room.players) {
+				pos = boardToCanvas(x, y, player.canvas)
+				room.players[i].socket.emit('drawMan', {'color': player.color, 'x': pos.x, 'y': pos.y})
+			}
+			if(!segment.men) segment.men = [{x : Math.floor(x), y: Math.floor(y)}]
+			else segment.men.push({x : Math.floor(x), y: Math.floor(y)})
+		}
+		endTurn(room, player)
 	}
 }
 
-function checkNeighbours(piece, x, y) {
-	var left = board[y*boardSize + x-1]
-	var right = board[y*boardSize + x+1]
-	var down = board[(y+1)*boardSize + x]
-	var up = board[(y-1)*boardSize + x]
+function checkNeighbours(piece, x, y, room, check=false) {
+	var left = (x <= 0 ? false : room.board[y*boardSize + x-1])
+	var right = (x >= boardSize-1 ? false : room.board[y*boardSize + x+1])
+	var down = (y >= boardSize-1 ? false : room.board[(y+1)*boardSize + x])
+	var up = (y <= 0 ? false : room.board[(y-1)*boardSize + x])
 
 	var hasNeighbours = false
-
 	if(left) {
 		if(left[east].piece.type != piece[west].piece.type)
 			return false
 		hasNeighbours = true
-
 	}
 	if(right) {
 		if(right[west].piece.type != piece[east].piece.type)
 			return false
 		hasNeighbours = true
-
 	}
 	if(down) {
 		if(down[north].piece.type != piece[south].piece.type)
 			return false
 		hasNeighbours = true
-
 	}
 	if(up) {
 		if(up[south].piece.type != piece[north].piece.type)
@@ -626,91 +804,266 @@ function checkNeighbours(piece, x, y) {
 		hasNeighbours = true
 	}
 	if(!hasNeighbours) return false
-	piece[west].neighbour = left[east]
-	piece[east].neighbour = right[west]
-	piece[south].neighbour = down[north]
-	piece[north].neighbour = up[south]
+	if(check) return true
+	if(left) {
+		piece[west].neighbour = left[east]
+		left[east].neighbour = true
+	}
+	if(right) {
+		piece[east].neighbour = right[west]
+		right[west].neighbour = true
+	}
+	if(down) {
+		piece[south].neighbour = down[north]
+		down[north].neighbour = true
+	}
+	if(up) {
+		piece[north].neighbour = up[south]
+		up[south].neighbour = true
+	}
 	return true
 }
 
-function mergeSegments(s1, s2) {
-	console.log(`merguje : ${s1}, ${s2}`)
-	for(var a of segments[s2].parts) {
+function mergeSegments(s1, s2, room) {
+	for(var a of room.segments[s2].parts) {
 		for(var i=0; i<4; i++) {
-			pieceAssign = board[a][i].assign
+			pieceAssign = room.board[a][i].assign
 			if(pieceAssign == s2) {
-				console.log("zmieniam")
-				board[a][i].assign = s1
+				room.board[a][i].assign = s1
 			}
 		}
-		if(segments[s1].parts.indexOf(a) == -1)
-			segments[s1].parts.push(a)
+		if(room.segments[s1].parts.indexOf(a) == -1)
+			room.segments[s1].parts.push(a)
 	}
-	segments[s2] = null
-	console.log("po zmergowaniu:")
-	console.log(segments[s1].parts)
-	console.log(segments[s2])
-}
-
-
-function sumUp(segment) {
-	var t = segment.parts.length
-	if(segment.parts[0].type == field) return
-	if(segment.parts[0] == town && segment.closed)
-		for (var p of segment.owners)
-			givePoints(p, 2*t)
-	else
-		for (var p of segment.owners)
-			givePoints(p, t)
-}
-
-function checkClosed(subPiece) {
-	var segment = subPiece.assign
-	if(segment.closed) return false
-	for (var a of segment.parts)
-		if(!a.neighbour)
-			return false
-	segment.closed = true
-	sumUp(segment)
-	return true
-}
-
-function checkPossibility(piece, x, y) {
-	return !board[y*boardSize + x] && checkNeighbours(piece, x, y)
-}
-
-function endTurn() {
-	myTurn = false
-	for(var i = 0; i<4; i++)
-		checkClosed(currPiece[i])
-}
-
-function addPiece(piece, x, y, rotation) {
-	currPiece = new drawnPiece(piece, x, y, rotation)
-	if(checkPossibility(currPiece, x, y)) {
-		board[y*boardSize + x] = currPiece
-		drawPiece(currPiece, boardToCanvas(x), boardToCanvas(y))
-		checkAssign(currPiece, x, y)
-		northBorder = Math.min(northBorder, y)
-		southBorder = Math.max(southBorder, y)
-		eastBorder = Math.max(eastBorder, x)
-		westBorder = Math.min(westBorder, x)
-	/*	console.log("segmenty")
-		for(var a of segments) {
-			console.log(a)
+	if(room.segments[s2].owners) {
+		if(!room.segments[s1].owners)
+			room.segments[s1].owners = []
+		for(var p2 of room.segments[s2].owners) {
+			var found = false
+			if(room.segments[s1].owners) {
+				for(var p1 of room.segments[s1].owners) {
+					if(p1.player == p2.player) {
+						p1.num += p2.num
+						found = true
+					}
+				}
+			}
+		if(!found)
+			room.segments[s1].owners.push(p2)
 		}
-		console.log("assign")
-		for(var i=0; i<4; i++)
-			console.log(currPiece[i].assign)
-		*/
-		if(currPlayer.pieces)
-			mayAddMan = true
-		else
-			endTurn()
+		for(var c of room.segments[s2].men)
+			room.segments[s1].men.push(c)
 	}
-	else {
-		// wyślij sygnał: powiedz, że nie można
+	room.segments[s2] = null
+}
+
+function findRightfulOwners(segment) {
+	var maxx = 0
+	console.log("w suwerenach")
+	console.log(segment)
+	for(var p of segment.owners)
+		maxx = Math.max(maxx, p.num)
+	var masters = []
+	for(var p of segment.owners)
+		if(p.num == maxx)
+			masters.push(p.player)
+	return masters
+}
+
+function sumUp(segment, room) {
+	console.log("SUMUJEMY!")
+	console.log(segment)
+	if(segment.type == field || !segment.owners) return
+	if(segment.type == monk) {
+		console.log("UWAGA!")
+		neigh = checkCloister(room, segment.x, segment.y)
+		console.log(neigh)
+		givePoints(segment.owners[0], neigh)
+		console.log("dodalem pkty")
+		redrawPiece(room, segment.x, segment.y)
+		segment.owners[0].pieces++
+		console.log("przerysowane")
+		return
+	}
+	var t = segment.parts.length
+	masters = findRightfulOwners(segment)
+	console.log(masters)
+	if(segment.type == town && segment.closed) {
+		for (var p of masters) {
+			givePoints(p, 2*t)
+		}
+		if(segment.men)
+				for(var c of segment.men)
+					redrawPiece(room, c.x, c.y)
+		for(var p of segment.owners)
+			p.player.pieces += p.num
+	}
+	else
+		for (var p of masters) {
+			givePoints(p, t)
+			console.log("segment.men")
+			console.log(segment.men)
+		}
+		if(segment.men)
+				for(var c of segment.men)
+					redrawPiece(room, c.x, c.y)
+		for(var p of segment.owners)
+			p.player.pieces += p.num
+	segment.owners = null
+}
+
+function givePoints(player, points)
+{
+	player.points += points
+}
+
+function checkClosed(segNum, room) {
+	console.log("SPRAWDZAM ZAMKNIĘCIE")
+	var segment = room.segments[segNum]
+	if(segment.type == field) {
+		console.log("pole")
 		return false
 	}
+	if(segment.closed) return false
+	for (var a of segment.parts) {
+		for (var i = 0; i<4; i++) {
+			if(room.board[a][i].assign == segNum) {
+				if(!room.board[a][i].neighbour) {
+					console.log(`nie jest ukończony segment:`)
+					console.log(segment)
+					return false
+				}
+			}
+		}
+	}
+	segment.closed = true
+	sumUp(segment, room)
 	return true
+}
+
+function checkPossibility(piece, x, y, room) {
+	return !room.board[y*boardSize + x] && checkNeighbours(piece, x, y, room)
+}
+
+function checkRandPiece(piece, room) {
+	for(var x = room.westBorder-1; x <= room.eastBorder+1; x++) {
+		for(var y = room.northBorder-1; y<= room.southBorder+1; y++) {
+			for(var r = 0; r<4; r++) {
+				var checkedPiece = new drawnPiece(piece, x, y, r)
+				if(!room.board[y*boardSize + x])
+					if(checkNeighbours(checkedPiece, x, y, room, true)) return true
+			}
+		}
+	}
+	return false
+}
+
+function endTurn(room, player) {
+	room.rotation = 0
+	if (player.mayAddMan == false)
+		return
+	room.turn = (room.turn+1) % room.playersCnt
+	player.mayAddMan = false;
+	for(var i = 0; i < 4; i++) {
+		checkClosed(room.currPiece[i].assign, room)
+		console.log("to chcemy zamknac")
+		console.log(room.segments[room.currPiece[i].assign].type)
+}
+	var rejected = []
+	var p
+	while(room.pieces.length)
+	{
+		var r = Math.floor(room.pieces.length * Math.random())
+		p = room.pieces.splice(r,1)
+	//	console.log(p)
+		if (checkRandPiece(p[0], room)) break
+		rejected.push(p[0])
+	}
+	if (room.pieces.length == 0)
+	{
+
+		endGame(room)
+		return
+	}
+	room.pieces.concat(rejected)
+	room.randPiece = p[0]
+	for (var i in room.players)
+	{
+		room.players[i].socket.emit('newPiece', room.randPiece)
+	}
+	update(room)
+	console.log(room.players)
+	console.log('Nowa tura')
+	//console.log(room)
+}
+
+function addPiece(piece, x, y, rotation, room, player) {
+	room.currPiece = new drawnPiece(room.randPiece, x, y, rotation)
+	if(checkPossibility(room.currPiece, x, y, room))
+	{
+		room.board[y*boardSize + x] = room.currPiece
+		for (var i in room.players)
+			room.players[i].socket.emit('drawPiece', {'piece': {'img': room.currPiece.img, 'rotation': room.currPiece.rotation}, 'pos': boardToCanvas(x, y, room.players[i].canvas)})
+		checkAssign(room.currPiece, x, y, room)
+		for(var i=x-1; i<= x+1; i++) {
+			for(var j=y-1; j<=y+1; j++) {
+				var p = room.board[j*boardSize + i]
+				if((i!= x || j!=y) && p && p.cloister && p.owner) {
+					if(checkCloister(room, i, j) == 9) {
+						givePoints(p.owner, 9)
+						p.owner = null
+					}
+				}
+			}
+		}
+		room.northBorder = Math.min(northBorder, y)
+		room.southBorder = Math.max(southBorder, y)
+		room.eastBorder = Math.max(eastBorder, x)
+		room.westBorder = Math.min(westBorder, x)
+		player.mayAddMan = true
+		if(player.pieces == 0)
+			endTurn(room, player)
+	}
+	return true
+}
+
+function endGame(room)
+{
+	console.log("KONIEC")
+	room.gameOn = false
+	for (var s of room.segments)
+		if(s && !s.closed)
+			sumUp(s, room)
+	console.log(room.players)
+	for (var i in room.players)
+	{
+		room.players[i].socket.emit('newPiece', room.randPiece)
+	}
+	update(room)
+	for (var i in room.players){
+		room.players[i].socket.emit('endGame')
+	}
+}
+
+function redrawPiece(room, x, y) {
+	piece = room.board[y*boardSize + x]
+	console.log(piece)
+	for (var i in room.players)
+		room.players[i].socket.emit('drawPiece', {'piece': {'img': piece.img, 'rotation': piece.rotation}, 'pos': boardToCanvas(x, y, room.players[i].canvas)})
+}
+
+function update(room)
+{
+	var points = []
+	var colors = []
+	var menCnt = []
+	for (var i in room.players)
+	{
+		points.push(room.players[i].points)
+		colors.push(room.players[i].color)
+		menCnt.push(room.players[i].pieces)
+	}
+	for (var i in room.players){
+		room.players[i].socket.emit('stats', {'points': points, 'colors': colors, 'menCnt': menCnt})
+	}
 }
