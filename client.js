@@ -3,17 +3,22 @@ var gridSize, canvasSize, canvas, ctx, smallCanvas, manSize, currImg, rotation=0
 
 var id
 var socket = io()
-document.addEventListener("DOMContentLoaded", function() 
+
+var bnd = new Image()
+bnd.src = "../tlo2.png"
+
+document.addEventListener("DOMContentLoaded", function()
 {
 	canvas = document.getElementById("mainCanvas")
 	smallCanvas = document.getElementById("smallCanvas")
 	var rect = canvas.getBoundingClientRect()
 	canvasSize = canvas.width
 	ctx = canvas.getContext("2d")
+	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 	gridSize = canvasSize/boardSize
-	manSize = gridSize/3
+	manSize = 0.4*gridSize
 	socket.emit('join', {
-		'roomNo': roomNo, 
+		'roomNo': roomNo,
 		'canvas': {
 			'x': rect.left,
 			'y': rect.top,
@@ -32,7 +37,7 @@ function newGame()
 	socket.emit('newgame')
 }
 
-function getMousePos(evt) 
+function getMousePos(evt)
 {
 	var rect = canvas.getBoundingClientRect()
 	return {
@@ -52,6 +57,7 @@ socket.on('id', function(data)
 socket.on('newgame', function()
 {
 	ctx.clearRect(0, 0, canvasSize, canvasSize)
+	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 	/*
   	window.addEventListener('click', function (e) {
 		// wyślij sygnał: getClick(e)
@@ -72,7 +78,7 @@ socket.on('drawPiece', function(data) {
 		//ctx.drawImage(img, x, y)
 		console.log(data.piece.rotation)
 	}
-	else 
+	else
 	{
 		ctx.save()
 		ctx.translate(x+gridSize/2, y+gridSize/2)
@@ -130,7 +136,7 @@ socket.on('rotate', function(r)
 	c.rotate(rotation*Math.PI/2)
 	c.drawImage(img, s/(-2), s/(-2), s, s)
 	c.restore()
-	
+
 })
 
 socket.on('endGame', function()
@@ -150,4 +156,3 @@ socket.on('stats', function(data)
 	}
 	document.getElementById("stats").innerHTML = inner + "</table>"
 })
-

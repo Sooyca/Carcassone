@@ -21,7 +21,8 @@ header {
     background-color: black;
     clear: left;
     text-align: center;
-    height: 15%
+    height: 15%;
+	background-image: url("../deska.jpg");
     margin: 0px
 }
 
@@ -38,7 +39,7 @@ canvas {
 	margin: auto;
 	display: block;
 }
-	
+
 
 div.menu {
     float: right;
@@ -46,8 +47,9 @@ div.menu {
     margin: 0;
     overflow: hidden;
     border: 1px solid gray;
-    background-color: white;
-    height: 100%
+    background-color: #583b27;
+    height: 100%;
+	background-image: url("../tlo-deski.jpg")
 }
 
 div.board {
@@ -68,20 +70,20 @@ div.board {
 <header>
    <h1>GrajSe</h1>
 </header>
- 
-<div id="menu" class = "menu">
+
+<div id="menu" class = "menu" >
 	<div style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
-	<button type="button" onclick="rotate(1)"> <img id = lewo src = "https://image.freepik.com/darmowe-ikony/strza%C5%82ka-do-przodu_318-40747.jpg"> </button>
+	<button type="button" onclick="rotate(1)"> <img id = lewo src = "../lewo.png" height=50> </button>
 	</div>
 	<div style="float: left; width=50%">
 	<canvas id="smallCanvas" style="margin-top: 2em"></canvas>
 	</div>
 	<div style="float: left; width=25%; margin-top: 8em; margin-left: 2em">
-	<button type="button" onclick="rotate(-1)"> <img id = prawo src = "http://img.freepik.com/darmowe-ikony/zarys-zakrzywiona-strza%C5%82ka-w-lewo_318-70582.jpg?size=338&ext=jpg"> </button>
+	<button type="button" onclick="rotate(-1)"> <img id = prawo src = "../prawo.png" height=50> </button>
 	</div>
 	<div>
-	<button id="newGameButton" onclick="newGame()" style="display:none;">Nowa gra</button>
-	<button id="passButton" onclick="endTurn()">Koniec tury</button>
+	<button id="newGameButton" onclick="newGame()" style="display:none;"> <img src = "../nowagra.png" width=50></button>
+	<button id="passButton" onclick="endTurn()"><img src="../koniectury" width=50></button>
 	</div>
 	<div id="stats">
 	</div>
@@ -98,7 +100,7 @@ div.board {
 	//console.log(hA)
 </script>
 
-<div class = "board" style="background-color: blue;">
+<div class = "board" style="background-color: #583b27;">
   <canvas id="mainCanvas"></canvas>
 </div>
 
@@ -116,4 +118,3 @@ div.board {
 
 </body>
 </html>
-
