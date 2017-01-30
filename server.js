@@ -177,19 +177,7 @@ app.post('/register', (req, res) => {
 	register_promise.then(
 		function(resolve0)
 		{
-			if(resolve0)
-			{
-				hide_show.register_menu = 'show';
-			}
-			var username
-			if (!req.session.username)
-			{
-				username = 'Anonimowy'
-				res.cookie('username', username)
-			}
-			else
-				username = req.session.username
-				res.redirect('/')
+			res.redirect('/')
 		},
 		function(reject0)
 		{
@@ -199,7 +187,6 @@ app.post('/register', (req, res) => {
 			if (!req.session.username)
 			{
 				username = 'Anonimowy'
-				res.cookie('username', username)
 			}
 			else
 				username = req.session.username
@@ -238,7 +225,6 @@ app.get('/', (req, res) =>
 	if (!req.session.username)
 	{
 		username = 'Anonimowy'
-		res.cookie('username', username)
 	}
 	else
 	{
@@ -254,11 +240,6 @@ app.get('/roomsList', authorize, (req, res) =>
 	res.render('roomsList', {'rooms': rooms, 'username': req.session.username})
 })
 
-app.get('/changeUsername', (req, res) =>
-{
-	res.cookie('username', req.query.newUsername)
-	res.redirect(req.query.returnUrl)
-})
 
 app.get('/createRoom', authorize, (req, res) =>
 {
@@ -317,7 +298,6 @@ app.post('/logIn', (req, res) =>
 				if (!req.session.username)
 				{
 					username = 'Anonimowy'
-					res.cookie('username', username)
 				}
 				else
 					username = req.session.username
@@ -341,7 +321,6 @@ app.post('/logIn', (req, res) =>
 			if (!req.session.username)
 			{
 				username = 'Anonimowy'
-				res.cookie('username', username)
 			}
 			else
 				username = req.session.username
