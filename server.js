@@ -29,7 +29,6 @@ app.use(session(
 
 
 var pg = require('pg');
-
 pg.defaults.ssl = true;
 pg.connect(process.env.DATABASE_URL, function(err, client) {
   if (err) throw err;
@@ -42,6 +41,8 @@ pg.connect(process.env.DATABASE_URL, function(err, client) {
     });
 });
 
+console.log("Database url")
+console.log(process.env.DATABASE_URL)
 
 app.get('/db', function (request, response) {
 	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
@@ -283,7 +284,7 @@ app.get('/createRoom', authorize, (req, res) =>
 app.get('/rooms/:id', (req, res) =>
 {
 	var id = req.params.id
-	if (rooms[id].players.length >= 6)
+	if (rooms[id] || rooms[id].players.length >= 6 || rooms[i].gameOn)
 		res.redirect('/roomsList')
 	else
 		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.session.username})
@@ -540,7 +541,6 @@ io.on('connection', function(socket)
 	{
 		var roomNo = roomNumber[socket.id]
     	var room = rooms[roomNo]
-    	if (room.gameOn) return
     	if (room.players[socket.id].id != 0)
     		return
 		delete rooms[roomNo]
