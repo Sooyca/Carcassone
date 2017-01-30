@@ -12,10 +12,12 @@
 <button class="przycisk" id="create_room_button" onclick = "createRoom()"> <t> Stwórz pokóy </t></button>
 	<div align="center">
 	<table>
-	<% for (var i = 0; i < rooms.length; i++)
+	<% var j = 1
+	for (var i = 0; i < rooms.length; i++, j++)
 	{ %>
+		<% if (rooms[i] == undefined) {j--; continue} %>
 		<tr>
-		<td> <%= i+1 %> </td>
+		<td> <%= j %> </td>
 		<td> <%= rooms[i].name %> </td>
 		<td>
 		<% if (rooms[i].playersCnt < 6) { %>

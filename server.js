@@ -245,8 +245,21 @@ app.get('/roomsListCarcassonne', authorize, (req, res) =>
 app.get('/createRoom', authorize, (req, res) =>
 {
 	console.log('Created room: ' + req.query.name)
-
-	rooms.push({
+	var pos = -1
+	for (var i = 0; i < rooms.length; i++)
+	{
+		if (rooms[i] == undefined)
+		{
+			pos = i
+			break
+		}
+	}
+	if (pos == -1)
+	{
+		rooms.push({})
+		pos = rooms.length - 1
+	}
+	rooms.[pos] = {
 		'name': req.query.name,
 		'players': {},
 		'playersCnt': 0,
@@ -263,8 +276,8 @@ app.get('/createRoom', authorize, (req, res) =>
 		'westBorder': Math.floor(boardSize/2),
 		'eastBorder': Math.floor(boardSize/2),
 		'pieces': createPieces()
-	})
-	res.redirect('/rooms/' + (rooms.length - 1))
+	}
+	res.redirect('/rooms/' + pos)
 })
 
 app.get('/rooms/:id', (req, res) =>
@@ -521,6 +534,16 @@ io.on('connection', function(socket)
 		for (var i in room.players)
 			room.players[i].socket.emit('rotate', r)
 		room.rotation += 4+r
+	})
+
+	socket.on('disconnect', function()
+	{
+		var roomNo = roomNumber[socket.id]
+    	var room = rooms[roomNo]
+    	if (room.gameOn) return
+    	if (room.players[socket.id].id != 0)
+    		return
+		delete rooms[roomNo]
 	})
 })
 
