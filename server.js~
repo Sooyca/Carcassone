@@ -5,7 +5,8 @@ var express = require('express')
 var session = require('express-session')
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser');
-
+try
+{
 var boardSize = 10
 var app = express()
 var server = http.createServer(app)
@@ -1098,4 +1099,9 @@ function update(room)
 	for (var i in room.players){
 		room.players[i].socket.emit('stats', {'points': points, 'colors': colors, 'menCnt': menCnt})
 	}
+}
+}
+catch (err)
+{
+	console.log(err)
 }
