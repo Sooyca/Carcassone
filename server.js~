@@ -275,7 +275,8 @@ app.get('/createRoom', authorize, (req, res) =>
 		'northBorder': Math.floor(boardSize/2),
 		'westBorder': Math.floor(boardSize/2),
 		'eastBorder': Math.floor(boardSize/2),
-		'pieces': createPieces()
+		'pieces': createPieces(),
+		'left': []
 	}
 	res.redirect('/rooms/' + pos)
 })
@@ -431,6 +432,7 @@ io.on('connection', function(socket)
     	if (room.players[socket.id].id != 0)
     		return
     	room.board = []
+    	room.left = []
     	room.turn = 0
     	room.segments = [{type : field}]
     	room.randPiece = startPiece
@@ -540,9 +542,12 @@ io.on('connection', function(socket)
 	{
 		var roomNo = roomNumber[socket.id]
     	var room = rooms[roomNo]
-    	if (room.players[socket.id].id != 0)
-    		return
-		delete rooms[roomNo]
+    	if (room.players[socket.id].id == 0)
+    	{
+			delete rooms[roomNo]
+			return
+		}
+		room.left.push(room.players[socket.id].id)
 	})
 })
 
@@ -985,7 +990,11 @@ function endTurn(room, player) {
 	room.rotation = 0
 	if (player.mayAddMan == false)
 		return
-	room.turn = (room.turn+1) % room.playersCnt
+	do
+	{
+		room.turn = (room.turn+1) % room.playersCnt
+	}
+	while(room.turn in room.left);
 	player.mayAddMan = false;
 	for(var i = 0; i < 4; i++) {
 		checkClosed(room.currPiece[i].assign, room)

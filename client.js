@@ -98,15 +98,13 @@ socket.on('drawPiece', function(data) {
 				
 			//	1000/1077*gridSize/2 + 70/1077*gridSize, y+1000/1077*gridSize/2 + 10/1077)
 				ctx.rotate(k*Math.PI/2)
-				ctx.drawImage(img, gridSize/(-2) + tr/wid * gridSize, gridSize/(-2) + smTr/wid * gridSize, smallWid/wid * gridSize, smallWid/wid * gridSize)
-				/*
-				if (k%4 == 3)
-					ctx.drawImage(img, gridSize/(-2) + 3/1077 * gridSize, gridSize/(-2) - 22/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
-				else if (k%4 == 2)
-					ctx.drawImage(img, gridSize/(-2) - 22/1077 * gridSize, gridSize/(-2) - 3/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
+				if(k%4 == 2)
+					ctx.drawImage(img, gridSize/(-2) + smTr/wid * gridSize, gridSize/(-2) + tr/wid * gridSize, smallWid/wid * gridSize, smallWid/wid * gridSize)
+				
+				else if (k%4 == 3)
+					ctx.drawImage(img, gridSize/(-2) + smTr/wid * gridSize, gridSize/(-2) + smTr/wid * gridSize, smallWid/wid * gridSize, smallWid/wid * gridSize)
 				else if (k%4 == 1)
-				 	ctx.drawImage(img, gridSize/(-2) - 3/1077 * gridSize, gridSize/(-2) + 22/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
-				 */
+					ctx.drawImage(img, gridSize/(-2) + tr/wid * gridSize, gridSize/(-2) + tr/wid * gridSize, smallWid/wid * gridSize, smallWid/wid * gridSize) 
 				ctx.restore()
 			}
 		})
