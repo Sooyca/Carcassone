@@ -779,7 +779,7 @@ function addOwner(subPiece, x, y, player, room) {
 			room.segments.push({type: monk, owners: [player], x : room.currX, y: room.currY})
 			player.pieces--
 			for (var i in room.players) {
-				pos = boardToCanvas(x, y, player.canvas)
+				pos = boardToCanvas(x, y, room.players[i].canvas)
 				room.players[i].socket.emit('drawMan', {'color': player.color, 'x': pos.x, 'y': pos.y})
 			}
 		}
