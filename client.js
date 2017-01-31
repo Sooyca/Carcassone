@@ -108,7 +108,7 @@ socket.on('drawPiece', function(data) {
 		img.src = data.piece.img
 
 	})
-	img.src = "../klocek.png"
+	empty.src = "../klocek.png"
 })
 
 socket.on('drawMan', function(data) {

@@ -108,7 +108,7 @@ socket.on('drawPiece', function(data) {
 		img.src = data.piece.img
 
 	})
-	img.src = "../klocek.png"
+	empty.src = "../klocek.png"
 })
 
 socket.on('drawMan', function(data) {
@@ -125,9 +125,9 @@ socket.on('newPiece', function(piece) {
 	var c = smallCanvas.getContext("2d")
 	var img = new Image()
 	img.onload = (function() {
-	console.log(img)
-	console.log(smallCanvas)
-	c.drawImage(img, 0, 0, smallCanvas.width, smallCanvas.height)
+		console.log(img)
+		console.log(smallCanvas)
+		c.drawImage(img, 0, 0, smallCanvas.width, smallCanvas.height)
 	})
 	img.src = piece.img
 	console.log(img.src)
