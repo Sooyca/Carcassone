@@ -74,7 +74,7 @@ socket.on('newgame', function()
 	})
 	*/
 })
-
+var wid = 1077, smallWid = 1000, tr = 70, smTr = wid - tr - smallWid
 
 socket.on('drawPiece', function(data) {
 	var x = data.pos.x, y = data.pos.y
@@ -87,16 +87,18 @@ socket.on('drawPiece', function(data) {
 			var k = data.piece.rotation
 			if(k%4 == 0)
 			{
-				ctx.drawImage(img, x + 70/1077 * gridSize, y + 10/1077 * gridSize, 1000/1077 * gridSize, 1000/1077 * gridSize)
+				ctx.drawImage(img, x + tr/wid * gridSize, y + smTr/wid * gridSize, smallWid/wid * gridSize, smallWid/wid * gridSize)
 				//ctx.drawImage(img, x, y)
 				console.log(data.piece.rotation)
 			}
 			else
 			{
 				ctx.save()
-				ctx.translate(x+1000/1077*gridSize/2 + 70/1077*gridSize, y+1000/1077*gridSize/2 + 10/1077)
+				ctx.translate(x+(tr+smallWid/2)*gridSize/wid, y+(smTr+smallWid/2)*gridSize/wid)
+				
+			//	1000/1077*gridSize/2 + 70/1077*gridSize, y+1000/1077*gridSize/2 + 10/1077)
 				ctx.rotate(k*Math.PI/2)
-				ctx.drawImage(img, gridSize/(-2) + 70/1077 * gridSize, gridSize/(-2) + 10/1077 * gridSize, 1000/1077 * gridSize, 1000/1077 * gridSize)
+				ctx.drawImage(img, gridSize/(-2) + tr/wid * gridSize, gridSize/(-2) + smTr/wid * gridSize, smallWid/wid * gridSize, smallWid/wid * gridSize)
 				/*
 				if (k%4 == 3)
 					ctx.drawImage(img, gridSize/(-2) + 3/1077 * gridSize, gridSize/(-2) - 22/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
