@@ -47,9 +47,8 @@ div.bigmenu {
 }
 
 div.menu {
-    width: 80%;
-    margin: 10%;
-    margin-top: 20%;
+    width: 100%;
+    margin: 20%;
     overflow: auto;
     background-color: transparent
 	height: 80%;
