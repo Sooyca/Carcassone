@@ -283,7 +283,7 @@ app.get('/createRoom', authorize, (req, res) =>
 app.get('/rooms/:id', (req, res) =>
 {
 	var id = req.params.id
-	if (rooms[id] == undefined || rooms[id].playersCnt >= 6 || rooms[i].gameOn)
+	if (rooms[id] == undefined || rooms[id].playersCnt >= 6 || rooms[id].gameOn)
 		res.redirect('/roomsListCarcassonne')
 	else
 		res.render('client', {'name': rooms[id].name, 'roomNo': id, 'username': req.session.username})
