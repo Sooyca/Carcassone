@@ -794,7 +794,7 @@ function addOwner(subPiece, x, y, player, room) {
 		player.pieces--
 		if(!checkClosed(subPiece.assign, room)) {
 			for (var i in room.players) {
-				pos = boardToCanvas(x, y, player.canvas)
+				pos = boardToCanvas(x, y, room.players[i].canvas)
 				room.players[i].socket.emit('drawMan', {'color': player.color, 'x': pos.x, 'y': pos.y})
 			}
 			if(!segment.men) segment.men = [{x : Math.floor(x), y: Math.floor(y)}]
