@@ -87,16 +87,16 @@ socket.on('drawPiece', function(data) {
 			var k = data.piece.rotation
 			if(k%4 == 0)
 			{
-				ctx.drawImage(img, x + 67/1077 * gridSize, y + 10/1077 * gridSize, 1000/1077 * gridSize, 1000/1077 * gridSize)
+				ctx.drawImage(img, x + 70/1077 * gridSize, y + 10/1077 * gridSize, 1000/1077 * gridSize, 1000/1077 * gridSize)
 				//ctx.drawImage(img, x, y)
 				console.log(data.piece.rotation)
 			}
 			else
 			{
 				ctx.save()
-				ctx.translate(x+gridSize/2, y+gridSize/2)
+				ctx.translate(x+1000/1077*gridSize/2 + 70/1077*gridSize, y+1000/1077*gridSize/2 + 10/1077)
 				ctx.rotate(k*Math.PI/2)
-				ctx.drawImage(img, x + 67/1077 * gridSize/(-2), y + 10/1077 * gridSize/(-2), 1000/1077 * gridSize, 1000/1077 * gridSize)
+				ctx.drawImage(img, gridSize/(-2) + 70/1077 * gridSize, gridSize/(-2) + 10/1077 * gridSize, 1000/1077 * gridSize, 1000/1077 * gridSize)
 				/*
 				if (k%4 == 3)
 					ctx.drawImage(img, gridSize/(-2) + 3/1077 * gridSize, gridSize/(-2) - 22/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
