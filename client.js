@@ -9,7 +9,7 @@ bnd.onload = (function() {
 	console.log(bnd.src)
 	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 })
-bnd.src = "../tlo2.png"
+bnd.src = "../tlo3.png"
 
 document.addEventListener("DOMContentLoaded", function()
 {
