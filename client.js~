@@ -9,7 +9,7 @@ bnd.onload = (function() {
 	console.log(bnd.src)
 	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 })
-bnd.src = "../tlo2.png"
+bnd.src = "../tlo3.png"
 
 document.addEventListener("DOMContentLoaded", function()
 {
@@ -87,7 +87,7 @@ socket.on('drawPiece', function(data) {
 			var k = data.piece.rotation
 			if(k%4 == 0)
 			{
-				ctx.drawImage(img, x + 22/1077 * gridSize, y + 3/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
+				ctx.drawImage(img, x + 67/1077 * gridSize, y + 10/1077 * gridSize, 1000/1077 * gridSize, 1000/1077 * gridSize)
 				//ctx.drawImage(img, x, y)
 				console.log(data.piece.rotation)
 			}
@@ -96,12 +96,15 @@ socket.on('drawPiece', function(data) {
 				ctx.save()
 				ctx.translate(x+gridSize/2, y+gridSize/2)
 				ctx.rotate(k*Math.PI/2)
-				if (k%4 == 1)
+				ctx.drawImage(img, x + 67/1077 * gridSize/(-2), y + 10/1077 * gridSize/(-2), 1000/1077 * gridSize, 1000/1077 * gridSize)
+				/*
+				if (k%4 == 3)
 					ctx.drawImage(img, gridSize/(-2) + 3/1077 * gridSize, gridSize/(-2) - 22/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
 				else if (k%4 == 2)
 					ctx.drawImage(img, gridSize/(-2) - 22/1077 * gridSize, gridSize/(-2) - 3/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
-				else
+				else if (k%4 == 1)
 				 	ctx.drawImage(img, gridSize/(-2) - 3/1077 * gridSize, gridSize/(-2) + 22/1077 * gridSize, 1051/1077 * gridSize, 1051/1077 * gridSize)
+				 */
 				ctx.restore()
 			}
 		})
