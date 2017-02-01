@@ -1077,6 +1077,7 @@ function endGame(room)
 	for (var i in room.players){
 		room.players[i].socket.emit('endGame')
 	}
+	zapisz_w_bazie(room);
 }
 
 function redrawPiece(room, x, y) {
@@ -1101,6 +1102,26 @@ function update(room)
 		room.players[i].socket.emit('stats', {'points': points, 'colors': colors, 'menCnt': menCnt})
 	}
 }
+
+function zapisz_w_bazie(room)
+{
+	var rekord = {
+		black_name: ""
+		black_points: 0
+		blue_name: ""
+		blue_points: 0
+		green_name: ""
+		green_points: 0
+		red_name: ""
+		red_points: 0
+		white_name: ""
+		white_points: 0
+		yellow_name: ""
+		yellow_points: 0
+	}
+	
+}
+
 }
 catch (err)
 {
