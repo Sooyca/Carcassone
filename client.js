@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function()
 	manSize = 0.4*gridSize
 	socket.emit('join', {
 		'roomNo': roomNo,
+		'username': username,
 		'canvas': {
 			'x': rect.left,
 			'y': rect.top,

@@ -414,6 +414,7 @@ io.on('connection', function(socket)
 			'color': colors[id],
 			'pieces': 8,
 			'roomNo': data.roomNo,
+			'username': data.username,
 			'id': id,
 			'mayAddMan': false,
 			'canvas': data.canvas,
