@@ -414,7 +414,9 @@ io.on('connection', function(socket)
 			'color': colors[id],
 			'pieces': 8,
 			'roomNo': data.roomNo,
-			'username': data.username,
+			'username': data.u
+	{
+		switch p.colorsername,
 			'id': id,
 			'mayAddMan': false,
 			'canvas': data.canvas,
@@ -1118,6 +1120,10 @@ function zapisz_w_bazie(room)
 		white_points: 0
 		yellow_name: ""
 		yellow_points: 0
+	}
+	for p in room.players
+	{
+		switch p.color
 	}
 	
 }
