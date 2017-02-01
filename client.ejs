@@ -34,7 +34,8 @@ footer {
 }
 
 canvas {
-	background-color: #fff2cc;
+	background-image: url("../tlo3.jpg");
+	background-size: 100% 100%;
 	margin: auto;
 	display: block;
 }
@@ -71,10 +72,12 @@ div.board {
 
 
 <body scroll = "no">
+
 <script> 
 	var roomNo = <%= roomNo %> 
 	var username = "<%= username %>"
 </script>
+
 
 <div id = "cont" class="container">
 
@@ -83,14 +86,18 @@ div.board {
 </header>
 
 <div id="menu" class = "menu" >
+
 	<div style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
 	<img  class="przycisk" id="lewo" onclick="rotate(1)" src = "../lewo.png" height=50>
+
 	</div>
 		<div style="float: left; width=50%">
 	<canvas id="smallCanvas" style="margin-top: 2em"></canvas>
 	</div>
+
 	<div style="float: left; width=25%; margin-top: 8em; margin-left: 2em">
 		<img class="przycisk" id="prawo" onclick="rotate(-1)" src = "../prawo.png">
+
 	</div>
 	<div class="przycisk">
 		<img id="newGameButton" onclick="newGame()" style="display:none;" src = "../nowagra.png" width=100>
