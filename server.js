@@ -373,7 +373,9 @@ try
 	{
 
 		if (req.session.username)
+		{
 			next()
+		}
 		else
 		{
 			hide_show.logIn_menu = "niezalogowany";
@@ -383,20 +385,18 @@ try
 
 
 	app.get("/wyniki_carcassonne", authorize, function(req, res){
-		var username = req.session.username
+		var username = req.session.username;
 		pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 		client.query('SELECT * FROM games_carcassonne WHERE black_name = $1 OR blue_name = $1 OR green_name = $1 OR red_name = $1 OR white_name = $1 OR yellow_name = $1;', [username], function(err, result) {
-			done();
-			if (err)
-			{ console.error(err); res.send("Error " + err); }
-			else
-			{    console.log("jddfykf");
-				
-				);
-
-				response.render('wyniki_carcassonne', {results: result.rows} );
-				
-		 }
+				done();
+				if (err)
+				{ console.error(err); res.send("Error " + err); }
+				else
+				{    
+					console.log("jddfykf");
+					response.render('wyniki_carcassonne', {results: result.rows} );
+		 		}
+		 
 		});
 		});
 	})
