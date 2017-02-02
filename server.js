@@ -510,7 +510,7 @@ console.log('server started')
 
 
 
-var colors = ["../black.png", "../blue.png", "../green.png", "../white.png", "../red.png", "../yellow.png",]
+var colors = ['../black.png', '../blue.png', '../green.png', '../white.png', '../red.png', '../yellow.png']
 
 
 var town = 2
@@ -1073,7 +1073,8 @@ function zapisz_w_bazie(room)
 		yellow_points: 0
 	}
 	for (p in room.players)
-	{
+	{	
+		console.log(p);
 		switch (p.color)
 		{
 			case colors[0]:
