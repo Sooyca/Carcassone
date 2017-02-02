@@ -1072,82 +1072,90 @@ function update(room)
 
 function zapisz_w_bazie(room)
 {
-	var rekord = {
-		black_name: "",
-		black_points: 0,
-		blue_name: "",
-		blue_points: 0,
-		green_name: "",
-		green_points: 0,
-		red_name: "",
-		red_points: 0,
-		white_name: "",
-		white_points: 0,
-		yellow_name: "",
-		yellow_points: 0
-	}
-	for (p of room.players)
-	{	
-		console.log("Players")
-		console.log(p);
-		console.log(p.color)
-		switch (p.color)
-		{
-			case colors[0]:
-				rekord.black_name = p.username;
-				rekord.black_points = p.points;
-				break;
-			case colors[1]:
-				rekord.blue_name = p.username;
-				rekord.blue_points = p.points;
-				break;
-			case colors[2]:
-				rekord.green_name = p.username;
-				rekord.green_points = p.points;
-				break;
-			case colors[3]:
-				rekord.red_name = p.username;
-				rekord.red_points = p.points;
-				break;
-			case colors[4]:
-				rekord.white_name = p.username;
-				rekord.white_points = p.points;
-				break;
-			case colors[5]:
-				rekord.yellow_name = p.username;
-				rekord.yellow_points = p.points;
-				break;
+	try
+	{
+		var rekord = {
+			black_name: "",
+			black_points: 0,
+			blue_name: "",
+			blue_points: 0,
+			green_name: "",
+			green_points: 0,
+			red_name: "",
+			red_points: 0,
+			white_name: "",
+			white_points: 0,
+			yellow_name: "",
+			yellow_points: 0
 		}
-	}
-	var insert_promise = new Promise(function (resolve0, reject0){
-		var rows;
-			pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-			client.query("INSERT INTO carcassonne_games (game_id, black_name, black_points, blue_name, blue_points, green_name, green_points, red_name, red_points, white_name, white_points, yellow_name, yellow_points) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",[rekord.black_name, rekord.black_points, rekord.blue_name, rekord.blue_points, rekord.green_name, rekord.green_points, rekord.red_name, rekord.red_points, rekord.white_name, rekord.white_points, rekord.yellow_name, rekord.yellow_points], function(err, result) {
-			done();
-			if (err)
-			{ console.error(err); res.send("Error " + err); reject0(true); }
-			else {
-				console.log("result");
-				console.log(result);
-				rows = result.rows;
-				console.log("result.rows");
-				console.log(rows);
-					resolve0(true);
+		for (p in room.players)
+		{	
+			console.log("Players")
+			console.log(p);
+			console.log(p.color)
+			console.log(room.players[p])
+			switch (room.players[p])
+			{
+				case colors[0]:
+					rekord.black_name = p.username;
+					rekord.black_points = p.points;
+					break;
+				case colors[1]:
+					rekord.blue_name = p.username;
+					rekord.blue_points = p.points;
+					break;
+				case colors[2]:
+					rekord.green_name = p.username;
+					rekord.green_points = p.points;
+					break;
+				case colors[3]:
+					rekord.red_name = p.username;
+					rekord.red_points = p.points;
+					break;
+				case colors[4]:
+					rekord.white_name = p.username;
+					rekord.white_points = p.points;
+					break;
+				case colors[5]:
+					rekord.yellow_name = p.username;
+					rekord.yellow_points = p.points;
+					break;
 			}
-
-			});
-		});
-	})
-	insert_promise.then(
-		function(resolve0)
-		{
-			console.log("Dodano wpis wyników do bazy danych");
-		},
-		function(reject0)
-		{
-			console.log("Wystąpił błąd podczas wpisywania wyników do bazy.");
 		}
-	)
+		var insert_promise = new Promise(function (resolve0, reject0){
+			var rows;
+				pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+				client.query("INSERT INTO carcassonne_games (game_id, black_name, black_points, blue_name, blue_points, green_name, green_points, red_name, red_points, white_name, white_points, yellow_name, yellow_points) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",[rekord.black_name, rekord.black_points, rekord.blue_name, rekord.blue_points, rekord.green_name, rekord.green_points, rekord.red_name, rekord.red_points, rekord.white_name, rekord.white_points, rekord.yellow_name, rekord.yellow_points], function(err, result) {
+				done();
+				if (err)
+				{ console.error(err); res.send("Error " + err); reject0(true); }
+				else {
+					console.log("result");
+					console.log(result);
+					rows = result.rows;
+					console.log("result.rows");
+					console.log(rows);
+						resolve0(true);
+				}
+
+				});
+			});
+		})
+		insert_promise.then(
+			function(resolve0)
+			{
+				console.log("Dodano wpis wyników do bazy danych");
+			},
+			function(reject0)
+			{
+				console.log("Wystąpił błąd podczas wpisywania wyników do bazy.");
+			}
+		)
+	}
+	catch(err)
+	{
+		console.log(err);
+	}
 	
 }
 
