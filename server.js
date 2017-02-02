@@ -371,6 +371,8 @@ io.on('connection', function(socket)
 		{
 			var roomNo = roomNumber[socket.id]
 			var room = rooms[roomNo]
+			if (room == undefined)
+				return
 			if (room.gameOn) return
 			if (room.players[socket.id].id != 0)
 				return
@@ -383,12 +385,17 @@ io.on('connection', function(socket)
 			room.gameOn = true
 			room.southBorder = room.northBorder = room.westBorder = room.eastBorder = Math.floor(boardSize/2)
 			room.pieces = createPieces()
+			var j = 0
 			for (var i in room.players)
 			{
 				room.players[i].pieces = 8
 				room.players[i].points = 0
 				room.players[i].mayAddMan = false
+				room.players[i].id = j
+				room.players[i].color = j
+				j++
 			}
+			room.playerCnt = j
 			update(room)
 			var r = Math.floor(room.pieces.length * Math.random())
 			var x = Math.floor(boardSize/2)
@@ -420,6 +427,8 @@ io.on('connection', function(socket)
 			var roomNo = roomNumber[socket.id]
 			////console.log(roomNo)
 			var room = rooms[roomNo]
+			if (room == undefined)
+				return
 			var player = room.players[socket.id]
 			//player.socket.emit('drawPiece', {'piece': startPiece, 'pos': {'x': 500, 'y': 500}})
 			var myTurn = (room.turn == room.players[socket.id].id)
@@ -476,10 +485,19 @@ io.on('connection', function(socket)
 
 	socket.on('endturn', function()
 	{
-		var roomNo = roomNumber[socket.id]
-		var room = rooms[roomNo]
-		var player = room.players[socket.id]
-		endTurn(room, player)
+		try
+		{
+			var roomNo = roomNumber[socket.id]
+			var room = rooms[roomNo]
+			if (room == undefined)
+				return
+			var player = room.players[socket.id]
+			endTurn(room, player)
+		}
+		catch(err)
+		{
+			console.log(err);
+		}
 	})
 
 	socket.on('rotate', function(r)
@@ -488,6 +506,8 @@ io.on('connection', function(socket)
 		{
 			var roomNo = roomNumber[socket.id]
 			var room = rooms[roomNo]
+			if (room == undefined)
+				return
 			var myTurn = (room.turn == room.players[socket.id].id)
 			if (!myTurn) return
 			for (var i in room.players)
@@ -507,8 +527,11 @@ io.on('connection', function(socket)
 		{
 			var roomNo = roomNumber[socket.id]
 			var room = rooms[roomNo]
+			if (room == undefined)
+				return
 			if (room.players[socket.id].id == 0)
 			{
+				endGame(room)
 				delete rooms[roomNo]
 				return
 			}
