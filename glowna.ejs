@@ -68,6 +68,8 @@
                 {$("#logowanie_blad").show();}
             if("<%= hide_show.logowanie_menu %>" == "niezalogowany")
                 {$("#niezalogowany_alert").show();}
+            if("<%= hide_show.logowanie_menu %>" == "show_with_error_NO_USER")
+                {$("#niezalogowany_alert_NO_USER").show();}
             if("<%= hide_show.zalogowanie %>" == "zalogowany")
                 {$("#logowanie_rejestracja").hide(); $("#zalogowanie").show();}
         })
@@ -80,6 +82,7 @@
 
         <div align="right" id="logowanie_blad" style="color:red;display:none"> Nieudana próba logowania. </div>
             <div align="right" id="niezalogowanie_alert" style="color:red;display:none"> Zaloguj się by móc grać. </div>
+            <div align="right" id="niezalogowanie_alert_NO_USER" style="color:red;display:none"> Użytkownik o podanym loginie nie istnieje. </div>
             <div align="right" id="logowanie_formularz" style="display:none">
             <form method="POST" action="logIn">
                 <table>
