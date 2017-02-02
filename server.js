@@ -1083,6 +1083,7 @@ function zapisz_w_bazie(room)
 	{	
 		console.log("Players")
 		console.log(p);
+		console.log(p.color)
 		switch (p.color)
 		{
 			case colors[0]:
