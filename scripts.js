@@ -11,9 +11,9 @@ function logOut()
 	window.location.assign('/wyloguj')
 }
 
-function wyniki()
+function wyniki_carcassonne()
 {
-	window.location.assign('/wyniki')
+	window.location.assign('/wyniki_carcassonne')
 }
 
 function roomsListCarcassonne(){
