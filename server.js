@@ -1079,7 +1079,7 @@ function zapisz_w_bazie(room)
 		yellow_name: "",
 		yellow_points: 0
 	}
-	for (p in room.players)
+	for (p of room.players)
 	{	
 		console.log("Players")
 		console.log(p);
