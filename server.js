@@ -509,14 +509,21 @@ io.on('connection', function(socket)
 
 	socket.on('disconnect', function()
 	{
-		var roomNo = roomNumber[socket.id]
-		var room = rooms[roomNo]
-		if (room.players[socket.id].id == 0)
+		try
 		{
-			delete rooms[roomNo]
-			return
+			var roomNo = roomNumber[socket.id]
+			var room = rooms[roomNo]
+			if (room.players[socket.id].id == 0)
+			{
+				delete rooms[roomNo]
+				return
+			}
+			room.left.push(room.players[socket.id].id)
 		}
-		room.left.push(room.players[socket.id].id)
+		catch(err)
+		{
+			console.log(err)
+		}
 	})
 })
 
