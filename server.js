@@ -323,7 +323,7 @@ function authorize(req, res, next)
 app.get("/wyniki_carcassonne", authorize, function(req, res){
 	var username = req.session.username;
 	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-	client.query('SELECT * FROM games_carcassonne WHERE black_name = $1 OR blue_name = $1 OR green_name = $1 OR red_name = $1 OR white_name = $1 OR yellow_name = $1;', [username], function(err, result) {
+	client.query('SELECT * FROM carcassonne_games WHERE black_name = $1 OR blue_name = $1 OR green_name = $1 OR red_name = $1 OR white_name = $1 OR yellow_name = $1;', [username], function(err, result) {
 			done();
 			if (err)
 			{ console.error(err); res.send("Error " + err); }
@@ -1029,6 +1029,7 @@ function endGame(room)
 	for (var i in room.players){
 		room.players[i].socket.emit('endGame')
 	}
+	console.log(room);
 	zapisz_w_bazie(room);
 }
 
