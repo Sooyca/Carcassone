@@ -1088,12 +1088,12 @@ function zapisz_w_bazie(room)
 			yellow_name: "",
 			yellow_points: 0
 		}
-		for (p in room.players)
+		for (socket_id in room.players)
 		{	
 			console.log("Players")
-			console.log(p);
-			console.log(p.color)
-			console.log(room.players[p])
+			console.log(socket_id);
+			var p = room.players[socket_id];
+			console.log(p)
 			switch (room.players[p])
 			{
 				case colors[0]:
