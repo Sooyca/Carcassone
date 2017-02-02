@@ -82,6 +82,8 @@
                 {$("#logowanie_rejestracja").hide(); $("#zalogowanie").show();}
             if("<%= hide_show.register_menu %>" == "not_matching")
                 {$("#rejestracja_blad_hasla").show();}
+            if("<%= hide_show.register_menu %>" == "register_complete")
+                {$("#rejestracja_zakonczona").show();}
         })
     </script>
     <aside style="float:right">
@@ -107,6 +109,7 @@
 
             <div align="right" id="rejestracja_blad" style="color:red;display:none"> Nieudana próba rejestracji. </div>
             <div align="right" id="rejestracja_blad_hasla" style="color:red;display:none"> Hasła nie zgadzają się.</div>
+            <div align="right" id="rejestracja_zakonczona" style="color:green;display:none"> Zarejestrowano nowego uzytkownika.</div>
                 <div align="right" id="rejestracja_formularz" style="display:none">
                 <form method="POST" action="register">
                     <table>

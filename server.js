@@ -185,6 +185,8 @@ app.post('/register', (req, res) => {
 	register_promise.then(
 		function(resolve0)
 		{
+			hide_show.register_menu = "register_complete"
+			res.render('glowna', {'username': username, 'hide_show': hide_show})
 			res.redirect('/')
 		},
 		function(reject0)
