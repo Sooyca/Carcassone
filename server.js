@@ -383,7 +383,7 @@ app.post('/logIn', (req, res) =>
 
 function authorize(req, res, next)
 {
-
+	var hide_show = {};
 	if (req.session.username)
 	{
 		next()
