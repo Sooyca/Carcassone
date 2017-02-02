@@ -59,9 +59,17 @@
                 {$("#rejestracja_blad").show();}
         //	$("#rejestracja_formularz").hide();
             $("#rejestracja_przycisk").click(function(){
+                if($(#logowanie_formularz).is(":visible"))
+                {
+                        $("#logowanie_formularz").hide();
+                } 
                 $("#rejestracja_formularz").toggle();
             });
             $("#logowanie_przycisk").click(function(){
+                if($(#rejestracja_formularz).is(":visible"))
+                {
+                        $("#rejestracja_formularz").hide();
+                } 
                 $("#logowanie_formularz").toggle();
             });
             if("<%= hide_show.logowanie_menu %>" == "show_with_error")
@@ -72,6 +80,8 @@
                 {$("#niezalogowany_alert_NO_USER").show();}
             if("<%= hide_show.zalogowanie %>" == "zalogowany")
                 {$("#logowanie_rejestracja").hide(); $("#zalogowanie").show();}
+            if("<%= hide_show.register_menu %>" == "not_matching")
+                {$("#rejestracja_blad_hasla").show();}
         })
     </script>
     <aside style="float:right">
@@ -96,6 +106,7 @@
         </div>
 
             <div align="right" id="rejestracja_blad" style="color:red;display:none"> Nieudana próba rejestracji. </div>
+            <div align="right" id="rejestracja_blad_hasla" style="color:red;display:none"> Hasła nie zgadzają się.</div>
                 <div align="right" id="rejestracja_formularz" style="display:none">
                 <form method="POST" action="register">
                     <table>
@@ -103,7 +114,9 @@
                     <tr><td><input type="text" class="pole" name='nazwa' maxlength="20"/></td></tr>
                     <tr><td><div align="right" class="tekst">Hasło:</div></td></tr>
                     <tr><td><input type="password" class="pole" name='haslo' maxlength="30"/></td></tr>
-                </tr><td><div align="right"><input class="przycisk" type="submit" formmethod="post"  value="Zareyestruy"/></div></td></tr>
+                    <tr><td><div align="right" class="tekst">Powtórz hasło:</div></td></tr>
+                    <tr><td><input type="password" class="pole" name='potwierdz_haslo' maxlength="30"/></td></tr>
+                </tr><td><div align="right"><input class="przycisk" type="submit" formmethod="post"  value="Zarejestruj"/></div></td></tr>
                 </table>
                 </form>
             </div>
