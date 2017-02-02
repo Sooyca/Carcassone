@@ -372,42 +372,49 @@ io.on('connection', function(socket)
 
 	socket.on('newgame', function()
 	{
-		var roomNo = roomNumber[socket.id]
-		var room = rooms[roomNo]
-		if (room.gameOn) return
-		if (room.players[socket.id].id != 0)
-			return
-		room.board = []
-		room.left = []
-		room.turn = 0
-		room.segments = [{type : field}]
-		room.randPiece = startPiece
-		room.rotation = 0
-		room.gameOn = true
-		room.southBorder = room.northBorder = room.westBorder = room.eastBorder = Math.floor(boardSize/2)
-		room.pieces = createPieces()
-		for (var i in room.players)
+		try
 		{
-			room.players[i].pieces = 8
-			room.players[i].points = 0
-			room.players[i].mayAddMan = false
+			var roomNo = roomNumber[socket.id]
+			var room = rooms[roomNo]
+			if (room.gameOn) return
+			if (room.players[socket.id].id != 0)
+				return
+			room.board = []
+			room.left = []
+			room.turn = 0
+			room.segments = [{type : field}]
+			room.randPiece = startPiece
+			room.rotation = 0
+			room.gameOn = true
+			room.southBorder = room.northBorder = room.westBorder = room.eastBorder = Math.floor(boardSize/2)
+			room.pieces = createPieces()
+			for (var i in room.players)
+			{
+				room.players[i].pieces = 8
+				room.players[i].points = 0
+				room.players[i].mayAddMan = false
+			}
+			update(room)
+			var r = Math.floor(room.pieces.length * Math.random())
+			var x = Math.floor(boardSize/2)
+			var y = Math.floor(boardSize/2)
+			room.randPiece = room.pieces[r]
+			room.currPiece = new drawnPiece(startPiece, x, y, 0)
+			room.board[y*boardSize + x] = room.currPiece
+			checkAssign(room.currPiece, x, y, room)
+			for (var i in rooms[roomNo].players)
+			{
+				room.players[i].socket.emit('newgame')
+			}
+			for (var i in room.players)
+			{
+				room.players[i].socket.emit('drawPiece', {'piece': {'img': room.currPiece.img, 'rotation': room.currPiece.rotation}, 'pos': boardToCanvas(x, y, room.players[i].canvas)})
+				room.players[i].socket.emit('newPiece', room.randPiece)
+			}
 		}
-		update(room)
-		var r = Math.floor(room.pieces.length * Math.random())
-		var x = Math.floor(boardSize/2)
-		var y = Math.floor(boardSize/2)
-		room.randPiece = room.pieces[r]
-		room.currPiece = new drawnPiece(startPiece, x, y, 0)
-		room.board[y*boardSize + x] = room.currPiece
-		checkAssign(room.currPiece, x, y, room)
-		for (var i in rooms[roomNo].players)
+		catch(err)
 		{
-			room.players[i].socket.emit('newgame')
-		}
-		for (var i in room.players)
-		{
-			room.players[i].socket.emit('drawPiece', {'piece': {'img': room.currPiece.img, 'rotation': room.currPiece.rotation}, 'pos': boardToCanvas(x, y, room.players[i].canvas)})
-			room.players[i].socket.emit('newPiece', room.randPiece)
+			console.log(err);
 		}
 	})
 
