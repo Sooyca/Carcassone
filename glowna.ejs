@@ -8,10 +8,15 @@
         body {
             background-color: #020b15;
         }
-        img.centered{
+        img.logo{
             display: block;
             margin-left: auto;
             margin-right: 30%;
+        }
+         img.centered{
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .tekst{
             color: #e6f2ff; /* #9999ff*/
@@ -39,13 +44,13 @@
 
         .przycisk_gra{
             background-color: #001233;
-            border: 1px solid #00001a;
+            border: 1px solid #00001a; 
             padding: 15px 20px;
             border-radius: 4px;
             color: #1a75ff;
         }
         .przycisk_gra:hover {
-            background-color:#262626; /*#4CAF50;  Green */
+            background-color: #173518; /* #092f4b; #334d4d; #262626; #4CAF50;  Green */
             color: white;
         }
     </style>
@@ -126,8 +131,11 @@
 
     </aside>
 <section>
-    <img src="./zasoby/grajselogo.png" alt="grajse" class="centered"  style="width:480";>
-    <div align="center"> <button class="przycisk_gra" onclick="roomsListCarcassonne()"><font size="4" > <div><img src="./zasoby/icons/logo_carcassonne_only.png" alt="Carcassonne" class="centered"  ;></div> </button> </div>
+   <img onclick = "na_glowna()" src="./zasoby/grajselogo.png" alt="grajse" class="logo"  style="width:480";>
+    <br></br>
+    <br></br>
+    <br></br>
+    <div align="center"> <button class="przycisk_gra" onclick="roomsListCarcassonne()"><font size="4" > <img src="./zasoby/icons/logo_carcassonne_only.png" alt="Carcassonne" class="centered"  > </button> </div>
 </section>
 
 </body>

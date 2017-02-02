@@ -19,3 +19,7 @@ function wyniki_carcassonne()
 function roomsListCarcassonne(){
 	window.location.assign('/roomsListCarcassonne')
 }
+
+function na_glowna(){
+	window.location.assign('/')
+}
