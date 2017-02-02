@@ -257,8 +257,7 @@ app.post('/logIn', (req, res) =>
 	select_promise.then(
 		function(resolve0)
 		{	
-			req.session.username = req.body.nazwa
-			var username = req.session.username
+			
 			if(resolve0 != [])
 			{
 				console.log(resolve0[0].password);
@@ -266,12 +265,7 @@ app.post('/logIn', (req, res) =>
 				console.log(hash(dane.haslo))
 				if (resolve0[0].password == hash(dane.haslo))
 				{
-					if (!req.session.username)
-					{
-						username = 'Anonimowy'
-					}
-					else
-						username = req.session.username
+					req.session.username = resolve0[0].name
 					res.redirect('/')
 				}
 				else 
