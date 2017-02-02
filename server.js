@@ -74,10 +74,7 @@ app.post('/register', (req, res) => {
 				if(dane.haslo == dane.potwierdz_haslo)
 				{
 					
-								console.log("file promise then")
-									console.log(my_id_key);
-									console.log("resolve in second then")
-									console.log(resolve);
+								
 									pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 										client.query("INSERT INTO users (name, password) VALUES ($1, $2);", [dane.nazwa, hash(dane.haslo)], function(err, result) {
 												done();
