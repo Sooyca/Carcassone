@@ -185,6 +185,7 @@ app.post('/register', (req, res) => {
 	register_promise.then(
 		function(resolve0)
 		{
+			var username = req.session.username;
 			hide_show.register_menu = "register_complete"
 			res.render('glowna', {'username': username, 'hide_show': hide_show})
 			res.redirect('/')
@@ -390,6 +391,7 @@ function authorize(req, res, next)
 	}
 	else
 	{
+		var username = req.session.username;
 		hide_show.logIn_menu = "niezalogowany";
 		res.render('glowna', {'username': username, 'hide_show': hide_show});
 	}
