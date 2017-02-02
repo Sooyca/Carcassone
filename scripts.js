@@ -11,11 +11,15 @@ function logOut()
 	window.location.assign('/wyloguj')
 }
 
-function wyniki()
+function wyniki_carcassonne()
 {
-	window.location.assign('/wyniki')
+	window.location.assign('/wyniki_carcassonne')
 }
 
 function roomsListCarcassonne(){
 	window.location.assign('/roomsListCarcassonne')
+}
+
+function na_glowna(){
+	window.location.assign('/')
 }

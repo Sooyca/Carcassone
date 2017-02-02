@@ -5,8 +5,7 @@ var express = require('express')
 var session = require('express-session')
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser');
-try
-{
+
 var boardSize = 10
 var app = express()
 var server = http.createServer(app)
@@ -32,142 +31,68 @@ app.use(session(
 var pg = require('pg');
 pg.defaults.ssl = true;
 pg.connect(process.env.DATABASE_URL, function(err, client) {
-  if (err) throw err;
-  console.log('Connected to postgres! Getting schemas...');
+if (err) throw err;
+console.log('Connected to postgres! Getting schemas...');
 
-  client
-    .query('SELECT table_schema,table_name FROM information_schema.tables;')
-    .on('row', function(row) {
-      console.log(JSON.stringify(row));
-    });
+client
+	.query('SELECT table_schema,table_name FROM information_schema.tables;')
+	.on('row', function(row) {
+	console.log(JSON.stringify(row));
+	});
 });
 
 
 
 app.get('/db', function (request, response) {
 	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-	  client.query('SELECT * FROM users;', function(err, result) {
-	    done();
-	    if (err)
-	     { console.error(err); response.send("Error " + err); }
-	    else
-	     {    console.log("snhgnhunagsnueicnrawigy7bawnigawgrsv");
-	          result.rows.forEach(
-	              r => {
-	                  console.log(r.name);
-	              }
-	          );
+	client.query('SELECT * FROM users;', function(err, result) {
+		done();
+		if (err)
+		{ console.error(err); response.send("Error " + err); }
+		else
+		{    console.log("snhgnhunagsnueicnrawigy7bawnigawgrsv");
+			result.rows.forEach(
+				r => {
+					console.log(r.name);
+				}
+			);
 
-	          response.render('views/pages/db', {results: result.rows} ); }
-	  });
+			response.render('views/pages/db', {results: result.rows} ); }
+	});
 	});
 });
 
 app.post('/register', (req, res) => {
 	var hide_show = {};
 	hide_show.register_menu = "hide";
+	var dane = req.body;
 	var register_promise = new Promise(
 		function(resolve0, reject0)
 		{
 			try
 			{
-				var dane = req.body;
-				console.log(req.body);
-
-				 var select_promise = new Promise(function (resolve, reject){
-					 var rows;
-						 pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-						client.query('SELECT name FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
-						  done();
-						  if (err)
-						   { console.error(err); response.send("Error " + err); }
-						   else {
-							   console.log("result");
-							   console.log(result);
-							   rows = result.rows;
-							   console.log("result.rows");
-							   console.log(rows);
-								   resolve(rows);
-						   }
-
-						});
-					});
-
-				})
-
-				select_promise.then(
-					function(resolve)
-					{
-						let i = 0;
-						resolve.forEach(
-							r => {
-								i = i + 1;
-							}
-						);
-						console.log("przed przed wpisaniem")
-						console.log(i);
-						console.log(resolve);
-
-						if(i == 0)
-						{
-							console.log("przed wpisaniem")
-							var my_id_key;
-							var file_read_promise = new Promise(function(resolve, reject) {
-								fs.readFile('./data/users', 'utf-8', (err, data) =>
-							   {
-								   if (err) throw err;
-								   console.log("plik");
-								   console.log(data);
-								   my_id_key = data[0] * 1;
-								   console.log("my_id_key po przypisaniu");
-								   console.log(my_id_key)
-								   resolve(my_id_key);
-							   });
-						   })
-						   file_read_promise.then(function(resolve)
-						   {
-							   console.log("file promise then")
-								console.log(my_id_key);
-								console.log("resolve in second then")
-								console.log(resolve);
-								pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-									   client.query("INSERT INTO users VALUES ($1, $2, $3);", [my_id_key, dane.nazwa, hash(dane.haslo)], function(err, result) {
-											done();
-											if (err)
-											 { console.error(err); }
-											else
-											{
-												my_id_key = my_id_key + 1;
-												fs.writeFile('./data/users', my_id_key, function(err) {
-													if(err) {
-														return console.log(err);
-													}
+				if(dane.haslo == dane.potwierdz_haslo)
+				{
+					
+								
+									pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+										client.query("INSERT INTO users (name, password) VALUES ($1, $2);", [dane.nazwa, hash(dane.haslo)], function(err, result) {
+												done();
+												if (err)
+												{ console.error(err); reject0(err)}
+												else
+												{
+													console.log('Dodano nowego użytkownika');
+													resolve0(true);
+												}
 												});
-												console.log('Dodano nowego użytkownika');
-												resolve0(true);
-											}
-											});
-									});
-								},
-								function(reject)
-								{
-									console.log("Błąd odczytu pliku.")
-								}
-						)
-						}
-						else
-						{
-								//.alert("Nazwa użytkownika jest zajęta;")
-								console.log("wolne nie true");
-								reject0(true)
-						}
-					},
-					function(err)
-					{
-						console.log("Błąd")
-						console.log(resolve);
-					}
-				)
+										});
+				}
+									
+				else
+				{
+					reject0("not_matching");
+				}
 			}
 			catch(err)
 			{
@@ -179,11 +104,22 @@ app.post('/register', (req, res) => {
 	register_promise.then(
 		function(resolve0)
 		{
+			var username = req.session.username;
+			hide_show.register_menu = "register_complete"
+			res.render('glowna', {'username': username, 'hide_show': hide_show})
 			res.redirect('/')
 		},
 		function(reject0)
 		{
 			hide_show.register_menu = "show_with_error"
+			if(reject0 == "not_matching")
+			{
+				hide_show.register_menu = "not_matching"
+			}
+			if(reject0 == 'duplicate key value violates unique constraint "users_pkey"')
+			{
+				hide_show.register_menu = "occupado";
+			}
 			console.log("Ujojoj");
 			var username
 			if (!req.session.username)
@@ -219,8 +155,8 @@ app.get('/admin', function (request, response) {
 
 app.get('/', (req, res) =>
 {
-    var hide_show = {};
-    hide_show.register_menu = "hide";
+	var hide_show = {};
+	hide_show.register_menu = "hide";
 	hide_show.logIn_menu = "hide"
 	hide_show.zalogowanie = "nie"
 	var username
@@ -298,21 +234,21 @@ app.post('/logIn', (req, res) =>
 	var dane = req.body;
 	console.log(req.body);
 
-	 var select_promise = new Promise(function (resolve0, reject0){
-		 var rows;
-			 pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+	var select_promise = new Promise(function (resolve0, reject0){
+		var rows;
+			pg.connect(process.env.DATABASE_URL, function(err, client, done) {
 			client.query('SELECT password FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
-			  done();
-			  if (err)
-			   { console.error(err); res.send("Error " + err); reject0(true); }
-			   else {
-				   console.log("result");
-				   console.log(result);
-				   rows = result.rows;
-				   console.log("result.rows");
-				   console.log(rows);
-					   resolve0(rows);
-			   }
+			done();
+			if (err)
+			{ console.error(err); res.send("Error " + err); reject0(true); }
+			else {
+				console.log("result");
+				console.log(result);
+				rows = result.rows;
+				console.log("result.rows");
+				console.log(rows);
+					resolve0(rows);
+			}
 
 			});
 		});
@@ -320,30 +256,35 @@ app.post('/logIn', (req, res) =>
 
 	select_promise.then(
 		function(resolve0)
-		{
-			console.log(resolve0[0].password);
-			console.log(dane.haslo)
-			console.log(hash(dane.haslo))
-			if (resolve0[0].password == hash(dane.haslo))
+		{	
+			req.session.username = req.body.nazwa
+			var username = req.session.username
+			if(resolve0 != [])
 			{
-				req.session.username = req.body.nazwa
-				var username
-				if (!req.session.username)
+				console.log(resolve0[0].password);
+				console.log(dane.haslo)
+				console.log(hash(dane.haslo))
+				if (resolve0[0].password == hash(dane.haslo))
 				{
-					username = 'Anonimowy'
+					if (!req.session.username)
+					{
+						username = 'Anonimowy'
+					}
+					else
+						username = req.session.username
+					res.redirect('/')
 				}
-				else
-					username = req.session.username
-				res.redirect('/')
-
+				else 
+				{
+					hide_show.logowanie_menu = "show_with_error"
+					res.render('glowna', {'username': username, 'hide_show': hide_show})
+				}
 			}
-			else {
-
-
-				hide_show.logowanie_menu = "show_with_error"
-				res.render('glowna', {'username': username, 'hide_show': hide_show})
+			else
+			{
+					hide_show.logowanie_menu = "show_with_error_NO_USER"
+					res.render('glowna', {'username': username, 'hide_show': hide_show})
 			}
-
 
 		},
 		function(reject0)
@@ -365,31 +306,34 @@ app.post('/logIn', (req, res) =>
 
 function authorize(req, res, next)
 {
-
+	var hide_show = {};
 	if (req.session.username)
+	{
 		next()
+	}
 	else
-		res.redirect('/admin')
+	{
+		var username = req.session.username;
+		hide_show.logIn_menu = "niezalogowany";
+		res.render('glowna', {'username': username, 'hide_show': hide_show});
+	}
 }
 
 
-app.get("/wyniki", authorize, function(req, res){
-	var username = req.session.username
+app.get("/wyniki_carcassonne", authorize, function(req, res){
+	var username = req.session.username;
 	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-	  client.query('SELECT * FROM games WHERE ;', [username], function(err, result) {
-	    done();
-	    if (err)
-	     { console.error(err); res.send("Error " + err); }
-	    else
-	     {    console.log("jddfykf");
-	          result.rows.forEach(
-	              r => {
-	                  console.log(r.name);
-	              }
-	          );
-
-	          response.render('wyniki', {results: result.rows} ); }
-	  });
+	client.query('SELECT * FROM carcassonne_games WHERE black_name = $1 OR blue_name = $1 OR green_name = $1 OR red_name = $1 OR white_name = $1 OR yellow_name = $1;', [username], function(err, result) {
+			done();
+			if (err)
+			{ console.error(err); res.send("Error " + err); }
+			else
+			{    
+				console.log("jddfykf");
+				res.render('wyniki_carcassonne', {results: result.rows} );
+			}
+		
+	});
 	});
 })
 
@@ -402,7 +346,7 @@ app.get("/wyloguj", function (req, res)
 
 io.on('connection', function(socket)
 {
-    console.log('Client connected: ' + socket.id)
+	console.log('Client connected: ' + socket.id)
 
 	socket.on('join', function(data)
 	{
@@ -426,98 +370,112 @@ io.on('connection', function(socket)
 
 	})
 
-    socket.on('newgame', function()
-    {
-    	var roomNo = roomNumber[socket.id]
-    	var room = rooms[roomNo]
-    	if (room.gameOn) return
-    	if (room.players[socket.id].id != 0)
-    		return
-    	room.board = []
-    	room.left = []
-    	room.turn = 0
-    	room.segments = [{type : field}]
-    	room.randPiece = startPiece
-    	room.rotation = 0
-    	room.gameOn = true
-    	room.southBorder = room.northBorder = room.westBorder = room.eastBorder = Math.floor(boardSize/2)
-    	room.pieces = createPieces()
-		for (var i in room.players)
+	socket.on('newgame', function()
+	{
+		try
 		{
-			room.players[i].pieces = 8
-			room.players[i].points = 0
-			room.players[i].mayAddMan = false
-		}
-		update(room)
-    	var r = Math.floor(room.pieces.length * Math.random())
-    	var x = Math.floor(boardSize/2)
-    	var y = Math.floor(boardSize/2)
-		room.randPiece = room.pieces[r]
-		room.currPiece = new drawnPiece(startPiece, x, y, 0)
-    	room.board[y*boardSize + x] = room.currPiece
-		checkAssign(room.currPiece, x, y, room)
-    	for (var i in rooms[roomNo].players)
-    	{
-    		room.players[i].socket.emit('newgame')
-    	}
-		for (var i in room.players)
-		{
-			room.players[i].socket.emit('drawPiece', {'piece': {'img': room.currPiece.img, 'rotation': room.currPiece.rotation}, 'pos': boardToCanvas(x, y, room.players[i].canvas)})
-			room.players[i].socket.emit('newPiece', room.randPiece)
-		}
-    })
-
-    socket.on('click', function(e)
-    {
-    	var roomNo = roomNumber[socket.id]
-    	////console.log(roomNo)
-    	var room = rooms[roomNo]
-    	var player = room.players[socket.id]
-    	//player.socket.emit('drawPiece', {'piece': startPiece, 'pos': {'x': 500, 'y': 500}})
-    	var myTurn = (room.turn == room.players[socket.id].id)
-   // 	console.log(room.turn)
-    	//console.log(myTurn)
-    	var mayAddMan = player.mayAddMan
-		if(myTurn && room.gameOn)
-		{
-			var coo = canvasToBoard(e, player.canvas)
-			if(mayAddMan)
+			var roomNo = roomNumber[socket.id]
+			var room = rooms[roomNo]
+			if (room.gameOn) return
+			if (room.players[socket.id].id != 0)
+				return
+			room.board = []
+			room.left = []
+			room.turn = 0
+			room.segments = [{type : field}]
+			room.randPiece = startPiece
+			room.rotation = 0
+			room.gameOn = true
+			room.southBorder = room.northBorder = room.westBorder = room.eastBorder = Math.floor(boardSize/2)
+			room.pieces = createPieces()
+			for (var i in room.players)
 			{
-				if(Math.floor(coo.x) == room.currX && Math.floor(coo.y) == room.currY) {
-					var x1 = coo.x - room.currX - 0.5
-					var y1 = coo.y - room.currY - 0.5
-					if (x1-y1 > 0 && x1+y1 > 0) {
-						if(room.currPiece[east].piece.type == field && room.currPiece.cloister)
-							addOwner(room.currPiece,room.currX + 0.5, room.currY + 0.5, player, room)
-						else
-							addOwner(room.currPiece[east], room.currX + 0.8, room.currY + 0.5, player, room)
-					}
-					else if(x1-y1 > 0 && x1+y1 < 0){
-						if(room.currPiece[north].piece.type == field && room.currPiece.cloister)
-							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
-						else
-							addOwner(room.currPiece[north], room.currX + 0.5, room.currY + 0.2, player, room)
-					}
-					else if(x1-y1 < 0 && x1+y1 > 0){
-						if(room.currPiece[south].piece.type == field && room.currPiece.cloister)
-							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
-						else
-							addOwner(room.currPiece[south], room.currX + 0.5, room.currY + 0.8, player, room)
-					}
-					else {
-						if(room.currPiece[west].piece.type == field && room.currPiece.cloister)
-							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
-						else
-							addOwner(room.currPiece[west], room.currX + 0.2, room.currY + 0.5, player, room)
+				room.players[i].pieces = 8
+				room.players[i].points = 0
+				room.players[i].mayAddMan = false
+			}
+			update(room)
+			var r = Math.floor(room.pieces.length * Math.random())
+			var x = Math.floor(boardSize/2)
+			var y = Math.floor(boardSize/2)
+			room.randPiece = room.pieces[r]
+			room.currPiece = new drawnPiece(startPiece, x, y, 0)
+			room.board[y*boardSize + x] = room.currPiece
+			checkAssign(room.currPiece, x, y, room)
+			for (var i in rooms[roomNo].players)
+			{
+				room.players[i].socket.emit('newgame')
+			}
+			for (var i in room.players)
+			{
+				room.players[i].socket.emit('drawPiece', {'piece': {'img': room.currPiece.img, 'rotation': room.currPiece.rotation}, 'pos': boardToCanvas(x, y, room.players[i].canvas)})
+				room.players[i].socket.emit('newPiece', room.randPiece)
+			}
+		}
+		catch(err)
+		{
+			console.log(err);
+		}
+	})
+
+	socket.on('click', function(e)
+	{
+		try
+		{
+			var roomNo = roomNumber[socket.id]
+			////console.log(roomNo)
+			var room = rooms[roomNo]
+			var player = room.players[socket.id]
+			//player.socket.emit('drawPiece', {'piece': startPiece, 'pos': {'x': 500, 'y': 500}})
+			var myTurn = (room.turn == room.players[socket.id].id)
+	// 	console.log(room.turn)
+			//console.log(myTurn)
+			var mayAddMan = player.mayAddMan
+			if(myTurn && room.gameOn)
+			{
+				var coo = canvasToBoard(e, player.canvas)
+				if(mayAddMan)
+				{
+					if(Math.floor(coo.x) == room.currX && Math.floor(coo.y) == room.currY) {
+						var x1 = coo.x - room.currX - 0.5
+						var y1 = coo.y - room.currY - 0.5
+						if (x1-y1 > 0 && x1+y1 > 0) {
+							if(room.currPiece[east].piece.type == field && room.currPiece.cloister)
+								addOwner(room.currPiece,room.currX + 0.5, room.currY + 0.5, player, room)
+							else
+								addOwner(room.currPiece[east], room.currX + 0.8, room.currY + 0.5, player, room)
+						}
+						else if(x1-y1 > 0 && x1+y1 < 0){
+							if(room.currPiece[north].piece.type == field && room.currPiece.cloister)
+								addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+							else
+								addOwner(room.currPiece[north], room.currX + 0.5, room.currY + 0.2, player, room)
+						}
+						else if(x1-y1 < 0 && x1+y1 > 0){
+							if(room.currPiece[south].piece.type == field && room.currPiece.cloister)
+								addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+							else
+								addOwner(room.currPiece[south], room.currX + 0.5, room.currY + 0.8, player, room)
+						}
+						else {
+							if(room.currPiece[west].piece.type == field && room.currPiece.cloister)
+								addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+							else
+								addOwner(room.currPiece[west], room.currX + 0.2, room.currY + 0.5, player, room)
+						}
 					}
 				}
+				else
+				{
+					room.currX = Math.floor(coo.x)
+					room.currY = Math.floor(coo.y)
+					addPiece(room.randPiece, room.currX, room.currY, room.rotation, room, player)
+				}
 			}
-			else
-			{
-				room.currX = Math.floor(coo.x)
-				room.currY = Math.floor(coo.y)
-				addPiece(room.randPiece, room.currX, room.currY, room.rotation, room, player)
-			}
+		}
+		catch(err)
+		{
+			console.log(err);
 		}
 	})
 
@@ -530,22 +488,30 @@ io.on('connection', function(socket)
 	})
 
 	socket.on('rotate', function(r)
-	{
-		var roomNo = roomNumber[socket.id]
-		var room = rooms[roomNo]
-		var myTurn = (room.turn == room.players[socket.id].id)
-		if (!myTurn) return
-		for (var i in room.players)
-			room.players[i].socket.emit('rotate', r)
-		room.rotation += 4+r
+	{	
+		try
+		{
+			var roomNo = roomNumber[socket.id]
+			var room = rooms[roomNo]
+			var myTurn = (room.turn == room.players[socket.id].id)
+			if (!myTurn) return
+			for (var i in room.players)
+				room.players[i].socket.emit('rotate', r)
+			room.rotation += 4+r
+		}
+		catch (err)
+		{
+			console.log(err)
+		}
+
 	})
 
 	socket.on('disconnect', function()
 	{
 		var roomNo = roomNumber[socket.id]
-    	var room = rooms[roomNo]
-    	if (room.players[socket.id].id == 0)
-    	{
+		var room = rooms[roomNo]
+		if (room.players[socket.id].id == 0)
+		{
 			delete rooms[roomNo]
 			return
 		}
@@ -558,7 +524,7 @@ console.log('server started')
 
 
 
-var colors = ["../red.png", "../blue.png", "../yellow.png", "../green.png", "../black.png", "../white.png"]
+var colors = ['../black.png', '../blue.png', '../green.png', '../white.png', '../red.png', '../yellow.png']
 
 
 var town = 2
@@ -656,13 +622,13 @@ function createPieces()
 
 	for(var i=0; i<3; i++)
 		pieces.push(new createPiece(townAlone, roadStraight, fieldAlone, roadStraight, "../start.jpg"))
-*/
+
 
 	for(var i=0; i<8; i++)
 		pieces.push(new createPiece(roadStraight, fieldAlone, roadStraight, fieldAlone, "../straightRoad.jpg"))
 
 	for(var i=0; i<9; i++)
-		pieces.push(new createPiece(fieldAlone, fieldAlone, roadLeft, roadRight, "../curve.jpg"))
+		pieces.push(new createPiece(fieldAlone, fieldAlone, roadLeft, roadRight, "../curve.jpg"))*/
 	for(var i=0; i<4; i++)
 		pieces.push(new createPiece(fieldAlone, roadEnd, roadEnd, roadEnd, "../tripleCrossing.jpg"))
 
@@ -687,8 +653,8 @@ function createPieces()
 function getMousePos(evt, canvas)
 {
 	return {
-	  'x': evt.clientX - canvas.x,
-	  'y': evt.clientY - canvas.y
+	'x': evt.clientX - canvas.x,
+	'y': evt.clientY - canvas.y
 	}
 }
 
@@ -1077,6 +1043,7 @@ function endGame(room)
 	for (var i in room.players){
 		room.players[i].socket.emit('endGame')
 	}
+	console.log(room);
 	zapisz_w_bazie(room);
 }
 
@@ -1105,25 +1072,92 @@ function update(room)
 
 function zapisz_w_bazie(room)
 {
-	var rekord = {
-		black_name: ""
-		black_points: 0
-		blue_name: ""
-		blue_points: 0
-		green_name: ""
-		green_points: 0
-		red_name: ""
-		red_points: 0
-		white_name: ""
-		white_points: 0
-		yellow_name: ""
-		yellow_points: 0
+	try
+	{
+		var rekord = {
+			black_name: "",
+			black_points: 0,
+			blue_name: "",
+			blue_points: 0,
+			green_name: "",
+			green_points: 0,
+			red_name: "",
+			red_points: 0,
+			white_name: "",
+			white_points: 0,
+			yellow_name: "",
+			yellow_points: 0
+		}
+		for (socket_id in room.players)
+		{	
+			console.log("Players")
+			console.log(socket_id);
+			console.log(room.players);
+			var p = room.players[socket_id];
+			console.log("pe");
+			console.log(p);
+			switch (p.color)
+			{
+				case colors[0]:
+					rekord.black_name = p.username;
+					rekord.black_points = p.points;
+					break;
+				case colors[1]:
+					rekord.blue_name = p.username;
+					rekord.blue_points = p.points;
+					break;
+				case colors[2]:
+					rekord.green_name = p.username;
+					rekord.green_points = p.points;
+					break;
+				case colors[3]:
+					rekord.red_name = p.username;
+					rekord.red_points = p.points;
+					break;
+				case colors[4]:
+					rekord.white_name = p.username;
+					rekord.white_points = p.points;
+					break;
+				case colors[5]:
+					rekord.yellow_name = p.username;
+					rekord.yellow_points = p.points;
+					break;
+			}
+		}
+		var insert_promise = new Promise(function (resolve0, reject0){
+			var rows;
+				pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+				client.query("INSERT INTO carcassonne_games (game_id, black_name, black_points, blue_name, blue_points, green_name, green_points, red_name, red_points, white_name, white_points, yellow_name, yellow_points) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);",[rekord.black_name, rekord.black_points, rekord.blue_name, rekord.blue_points, rekord.green_name, rekord.green_points, rekord.red_name, rekord.red_points, rekord.white_name, rekord.white_points, rekord.yellow_name, rekord.yellow_points], function(err, result) {
+				done();
+				if (err)
+				{ console.error(err); res.send("Error " + err); reject0(true); }
+				else {
+					console.log("result");
+					console.log(result);
+					rows = result.rows;
+					console.log("result.rows");
+					console.log(rows);
+						resolve0(true);
+				}
+
+				});
+			});
+		})
+		insert_promise.then(
+			function(resolve0)
+			{
+				console.log("Dodano wpis wyników do bazy danych");
+			},
+			function(reject0)
+			{
+				console.log("Wystąpił błąd podczas wpisywania wyników do bazy.");
+			}
+		)
+	}
+	catch(err)
+	{
+		console.log(err);
 	}
 	
 }
 
-}
-catch (err)
-{
-	console.log(err)
-}
