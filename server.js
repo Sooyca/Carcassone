@@ -380,7 +380,7 @@ try
 		{
 			hide_show.logIn_menu = "niezalogowany";
 			res.render('glowna', {'username': username, 'hide_show': hide_show});
-		{
+		}
 	}
 
 
@@ -1194,3 +1194,4 @@ catch (err)
 {
 	console.log(err)
 }
+
