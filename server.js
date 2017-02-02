@@ -321,7 +321,7 @@ try
 		select_promise.then(
 			function(resolve0)
 			{
-				if(rows != [])
+				if(resolve0 != [])
 				{
 					console.log(resolve0[0].password);
 					console.log(dane.haslo)
