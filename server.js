@@ -116,7 +116,7 @@ app.post('/register', (req, res) => {
 			{
 				hide_show.register_menu = "not_matching"
 			}
-			if(reject0 == 'duplicate key value violates unique constraint "users_pkey"')
+			if(reject0.routine == '_bt_check_unique')
 			{
 				hide_show.register_menu = "occupado";
 			}
