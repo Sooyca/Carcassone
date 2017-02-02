@@ -257,7 +257,10 @@ app.post('/logIn', (req, res) =>
 	select_promise.then(
 		function(resolve0)
 		{	
-			
+			console.log("resolve0");
+			console.log(resolve0);
+			console.log("resolve0[0]");
+			console.log(resolve0[0]);
 			if(resolve0[0] != undefined)
 			{
 				console.log(resolve0[0].password);
@@ -271,12 +274,24 @@ app.post('/logIn', (req, res) =>
 				else 
 				{
 					hide_show.logowanie_menu = "show_with_error"
+					if (!req.session.username)
+					{
+						username = 'Anonimowy'
+					}
+					else
+						username = req.session.username
 					res.render('glowna', {'username': username, 'hide_show': hide_show})
 				}
 			}
 			else
 			{
 					hide_show.logowanie_menu = "show_with_error_NO_USER"
+					if (!req.session.username)
+					{
+						username = 'Anonimowy'
+					}
+					else
+						username = req.session.username
 					res.render('glowna', {'username': username, 'hide_show': hide_show})
 			}
 
