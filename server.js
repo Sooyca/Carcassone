@@ -1092,7 +1092,7 @@ function zapisz_w_bazie(room)
 		{	
 			console.log("Players")
 			console.log(socket_id);
-			var p = room.players[socket_id];
+			var p = room.players.socket_id;
 			console.log(p)
 			switch (room.players[p])
 			{
