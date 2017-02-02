@@ -87,7 +87,7 @@
         })
     </script>
     <aside style="float:right">
-        <div id="logowanie_rejestracja">
+        <div id="logowanie_rejestracja" align="right">
              <button id="logowanie_przycisk" class="przycisk"> <t> Logowanie </t> </button><button id="rejestracja_przycisk" class="przycisk"><t> Rejestracja </t></button>
         </div>
         <div id="zalogowanie"style="display:none"> <t><%= username %></t> <button class="przycisk" id="wyniki_przycisk" onclick = "wyniki_carcassonne()"> <t> Statystyki </t></button> <button class="przycisk" id="wylogowanie_przycisk" onclick = "logOut()"> <t> Wyloguj </t></button></div>
@@ -109,7 +109,7 @@
 
             <div align="right" id="rejestracja_blad" style="color:red;display:none"> Nieudana próba rejestracji. </div>
             <div align="right" id="rejestracja_blad_hasla" style="color:red;display:none"> Hasła nie zgadzają się.</div>
-            <div align="right" id="rejestracja_zakonczona" style="color:green;display:none"> Zarejestrowano nowego uzytkownika.</div>
+            <div align="right" id="rejestracja_zakonczona" style="color:green;display:none"> Zarejestrowano nowego użytkownika.</div>
                 <div align="right" id="rejestracja_formularz" style="display:none">
                 <form method="POST" action="register">
                     <table>
