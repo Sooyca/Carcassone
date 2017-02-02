@@ -330,7 +330,7 @@ app.get("/wyniki_carcassonne", authorize, function(req, res){
 			else
 			{    
 				console.log("jddfykf");
-				response.render('wyniki_carcassonne', {results: result.rows} );
+				res.render('wyniki_carcassonne', {results: result.rows} );
 			}
 		
 	});
@@ -1081,6 +1081,7 @@ function zapisz_w_bazie(room)
 	}
 	for (p in room.players)
 	{	
+		conlole.log("Players")
 		console.log(p);
 		switch (p.color)
 		{
