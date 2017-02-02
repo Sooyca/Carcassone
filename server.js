@@ -420,55 +420,62 @@ io.on('connection', function(socket)
 
 	socket.on('click', function(e)
 	{
-		var roomNo = roomNumber[socket.id]
-		////console.log(roomNo)
-		var room = rooms[roomNo]
-		var player = room.players[socket.id]
-		//player.socket.emit('drawPiece', {'piece': startPiece, 'pos': {'x': 500, 'y': 500}})
-		var myTurn = (room.turn == room.players[socket.id].id)
-// 	console.log(room.turn)
-		//console.log(myTurn)
-		var mayAddMan = player.mayAddMan
-		if(myTurn && room.gameOn)
+		try
 		{
-			var coo = canvasToBoard(e, player.canvas)
-			if(mayAddMan)
+			var roomNo = roomNumber[socket.id]
+			////console.log(roomNo)
+			var room = rooms[roomNo]
+			var player = room.players[socket.id]
+			//player.socket.emit('drawPiece', {'piece': startPiece, 'pos': {'x': 500, 'y': 500}})
+			var myTurn = (room.turn == room.players[socket.id].id)
+	// 	console.log(room.turn)
+			//console.log(myTurn)
+			var mayAddMan = player.mayAddMan
+			if(myTurn && room.gameOn)
 			{
-				if(Math.floor(coo.x) == room.currX && Math.floor(coo.y) == room.currY) {
-					var x1 = coo.x - room.currX - 0.5
-					var y1 = coo.y - room.currY - 0.5
-					if (x1-y1 > 0 && x1+y1 > 0) {
-						if(room.currPiece[east].piece.type == field && room.currPiece.cloister)
-							addOwner(room.currPiece,room.currX + 0.5, room.currY + 0.5, player, room)
-						else
-							addOwner(room.currPiece[east], room.currX + 0.8, room.currY + 0.5, player, room)
-					}
-					else if(x1-y1 > 0 && x1+y1 < 0){
-						if(room.currPiece[north].piece.type == field && room.currPiece.cloister)
-							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
-						else
-							addOwner(room.currPiece[north], room.currX + 0.5, room.currY + 0.2, player, room)
-					}
-					else if(x1-y1 < 0 && x1+y1 > 0){
-						if(room.currPiece[south].piece.type == field && room.currPiece.cloister)
-							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
-						else
-							addOwner(room.currPiece[south], room.currX + 0.5, room.currY + 0.8, player, room)
-					}
-					else {
-						if(room.currPiece[west].piece.type == field && room.currPiece.cloister)
-							addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
-						else
-							addOwner(room.currPiece[west], room.currX + 0.2, room.currY + 0.5, player, room)
+				var coo = canvasToBoard(e, player.canvas)
+				if(mayAddMan)
+				{
+					if(Math.floor(coo.x) == room.currX && Math.floor(coo.y) == room.currY) {
+						var x1 = coo.x - room.currX - 0.5
+						var y1 = coo.y - room.currY - 0.5
+						if (x1-y1 > 0 && x1+y1 > 0) {
+							if(room.currPiece[east].piece.type == field && room.currPiece.cloister)
+								addOwner(room.currPiece,room.currX + 0.5, room.currY + 0.5, player, room)
+							else
+								addOwner(room.currPiece[east], room.currX + 0.8, room.currY + 0.5, player, room)
+						}
+						else if(x1-y1 > 0 && x1+y1 < 0){
+							if(room.currPiece[north].piece.type == field && room.currPiece.cloister)
+								addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+							else
+								addOwner(room.currPiece[north], room.currX + 0.5, room.currY + 0.2, player, room)
+						}
+						else if(x1-y1 < 0 && x1+y1 > 0){
+							if(room.currPiece[south].piece.type == field && room.currPiece.cloister)
+								addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+							else
+								addOwner(room.currPiece[south], room.currX + 0.5, room.currY + 0.8, player, room)
+						}
+						else {
+							if(room.currPiece[west].piece.type == field && room.currPiece.cloister)
+								addOwner(room.currPiece, room.currX + 0.5, room.currY + 0.5, player, room)
+							else
+								addOwner(room.currPiece[west], room.currX + 0.2, room.currY + 0.5, player, room)
+						}
 					}
 				}
+				else
+				{
+					room.currX = Math.floor(coo.x)
+					room.currY = Math.floor(coo.y)
+					addPiece(room.randPiece, room.currX, room.currY, room.rotation, room, player)
+				}
 			}
-			else
-			{
-				room.currX = Math.floor(coo.x)
-				room.currY = Math.floor(coo.y)
-				addPiece(room.randPiece, room.currX, room.currY, room.rotation, room, player)
-			}
+		}
+		catch(err)
+		{
+			console.log(err);
 		}
 	})
 
