@@ -330,6 +330,7 @@ app.get("/wyniki_carcassonne", authorize, function(req, res){
 			else
 			{    
 				console.log("jddfykf");
+				console.log(results.rows)
 				res.render('wyniki_carcassonne', {results: result.rows} );
 			}
 		
