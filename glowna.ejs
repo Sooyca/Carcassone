@@ -89,6 +89,8 @@
                 {$("#rejestracja_blad_hasla").show();}
             if("<%= hide_show.register_menu %>" == "register_complete")
                 {$("#rejestracja_zakonczona").show();}
+            if("<%= hide_show.register_menu %>" == "occupado")
+                {$("#rejestracja_occupado").show();}
         })
     </script>
     <aside style="float:right">
@@ -114,6 +116,7 @@
 
             <div align="right" id="rejestracja_blad" style="color:red;display:none"> Nieudana próba rejestracji. </div>
             <div align="right" id="rejestracja_blad_hasla" style="color:red;display:none"> Hasła nie zgadzają się.</div>
+            <div align="right" id="rejestracja_occupado" style="color:red;display:none"> Nazwa użytkownika jest zajęta. </div>
             <div align="right" id="rejestracja_zakonczona" style="color:green;display:none"> Zarejestrowano nowego użytkownika.</div>
                 <div align="right" id="rejestracja_formularz" style="display:none">
                 <form method="POST" action="register">

@@ -116,6 +116,10 @@ app.post('/register', (req, res) => {
 			{
 				hide_show.register_menu = "not_matching"
 			}
+			if(reject0 == 'duplicate key value violates unique constraint "users_pkey"')
+			{
+				hide_show.register_menu = "occupado";
+			}
 			console.log("Ujojoj");
 			var username
 			if (!req.session.username)
