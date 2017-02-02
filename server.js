@@ -1094,7 +1094,7 @@ function zapisz_w_bazie(room)
 			console.log(socket_id);
 			var p = room.players.socket_id;
 			console.log(p)
-			switch (room.players[p])
+			switch (p.color)
 			{
 				case colors[0]:
 					rekord.black_name = p.username;
