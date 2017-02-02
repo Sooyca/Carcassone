@@ -1081,7 +1081,7 @@ function zapisz_w_bazie(room)
 	}
 	for (p in room.players)
 	{	
-		conlole.log("Players")
+		console.log("Players")
 		console.log(p);
 		switch (p.color)
 		{
