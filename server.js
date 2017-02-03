@@ -1201,3 +1201,18 @@ function zapisz_w_bazie(room)
 	
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
