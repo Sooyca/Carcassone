@@ -263,12 +263,12 @@ app.post('/logIn', (req, res) =>
 			console.log(resolve0[0]);
 			if(resolve0[0].row != undefined)
 			{
-				console.log(resolve0[0].row.password);
+				console.log(resolve0[0].password);
 				console.log(dane.haslo)
 				console.log(hash(dane.haslo))
-				if (resolve0[0].row.password == hash(dane.haslo))
+				if (resolve0[0].password == hash(dane.haslo))
 				{
-					req.session.username = resolve[0].row.name
+					req.session.username = resolve[0].name
 					res.redirect('/')
 				}
 				else 
