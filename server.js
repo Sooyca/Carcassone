@@ -237,7 +237,7 @@ app.post('/logIn', (req, res) =>
 	var select_promise = new Promise(function (resolve0, reject0){
 		var rows;
 			pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-			client.query('SELECT (name, password) FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
+			client.query('SELECT name password FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
 			done();
 			if (err)
 			{ console.error(err); res.send("Error " + err); reject0(true); }
