@@ -270,7 +270,7 @@ app.post('/logIn', (req, res) =>
 					console.log(hash(dane.haslo))
 					if (resolve0[0].password == hash(dane.haslo))
 					{
-						req.session.username = resolve[0].name
+						req.session.username = resolve0[0].name
 						res.redirect('/')
 					}
 					else 
