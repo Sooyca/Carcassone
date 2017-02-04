@@ -263,7 +263,7 @@ app.post('/logIn', (req, res) =>
 				console.log(resolve0);
 				console.log("resolve0[0]");
 				console.log(resolve0[0]);
-				if(resolve0[0].row != undefined)
+				if(resolve0[0] != undefined)
 				{
 					console.log(resolve0[0].password);
 					console.log(dane.haslo)
