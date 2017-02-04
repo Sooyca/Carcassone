@@ -229,88 +229,94 @@ app.get('/rooms/:id', (req, res) =>
 
 app.post('/logIn', (req, res) =>
 {
-	var hide_show = {};
-	hide_show.logIn_menu = "hide";
-	var dane = req.body;
-	console.log(req.body);
+	try
+	{
+		var hide_show = {};
+		hide_show.logIn_menu = "hide";
+		var dane = req.body;
+		console.log(req.body);
 
-	var select_promise = new Promise(function (resolve0, reject0){
-		var rows;
-			pg.connect(process.env.DATABASE_URL, function(err, client, done) {
-			client.query('SELECT name password FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
-			done();
-			if (err)
-			{ console.error(err); res.send("Error " + err); reject0(true); }
-			else {
-				console.log("result");
-				console.log(result);
-				rows = result.rows;
-				console.log("result.rows");
-				console.log(rows);
-					resolve0(rows);
-			}
+		var select_promise = new Promise(function (resolve0, reject0){
+			var rows;
+				pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+				client.query('SELECT name, password FROM users WHERE name = $1 ;', [dane.nazwa], function(err, result) {
+				done();
+				if (err)
+				{ console.error(err); res.send("Error " + err); reject0(true); }
+				else {
+					console.log("result");
+					console.log(result);
+					rows = result.rows;
+					console.log("result.rows");
+					console.log(rows);
+						resolve0(rows);
+				}
 
+				});
 			});
-		});
-	})
+		})
 
-	select_promise.then(
-		function(resolve0)
-		{	
-			console.log("resolve0");
-			console.log(resolve0);
-			console.log("resolve0[0]");
-			console.log(resolve0[0]);
-			if(resolve0[0].row != undefined)
-			{
-				console.log(resolve0[0].password);
-				console.log(dane.haslo)
-				console.log(hash(dane.haslo))
-				if (resolve0[0].password == hash(dane.haslo))
+		select_promise.then(
+			function(resolve0)
+			{	
+				console.log("resolve0");
+				console.log(resolve0);
+				console.log("resolve0[0]");
+				console.log(resolve0[0]);
+				if(resolve0[0].row != undefined)
 				{
-					req.session.username = resolve[0].name
-					res.redirect('/')
+					console.log(resolve0[0].password);
+					console.log(dane.haslo)
+					console.log(hash(dane.haslo))
+					if (resolve0[0].password == hash(dane.haslo))
+					{
+						req.session.username = resolve[0].name
+						res.redirect('/')
+					}
+					else 
+					{
+						hide_show.logowanie_menu = "show_with_error"
+						if (!req.session.username)
+						{
+							username = 'Anonimowy'
+						}
+						else
+							username = req.session.username
+						res.render('glowna', {'username': username, 'hide_show': hide_show})
+					}
 				}
-				else 
+				else
 				{
-					hide_show.logowanie_menu = "show_with_error"
-					if (!req.session.username)
-					{
-						username = 'Anonimowy'
-					}
-					else
-						username = req.session.username
-					res.render('glowna', {'username': username, 'hide_show': hide_show})
+						hide_show.logowanie_menu = "show_with_error_NO_USER"
+						if (!req.session.username)
+						{
+							username = 'Anonimowy'
+						}
+						else
+							username = req.session.username
+						res.render('glowna', {'username': username, 'hide_show': hide_show})
 				}
-			}
-			else
-			{
-					hide_show.logowanie_menu = "show_with_error_NO_USER"
-					if (!req.session.username)
-					{
-						username = 'Anonimowy'
-					}
-					else
-						username = req.session.username
-					res.render('glowna', {'username': username, 'hide_show': hide_show})
-			}
 
-		},
-		function(reject0)
-		{
-			hide_show.logIn_menu = "show_with_error"
-			console.log("Ujojoj");
-			var username
-			if (!req.session.username)
+			},
+			function(reject0)
 			{
-				username = 'Anonimowy'
+				hide_show.logIn_menu = "show_with_error"
+				console.log("Ujojoj");
+				var username
+				if (!req.session.username)
+				{
+					username = 'Anonimowy'
+				}
+				else
+					username = req.session.username
+				res.render('glowna', {'username': username, 'hide_show': hide_show})
 			}
-			else
-				username = req.session.username
-			res.render('glowna', {'username': username, 'hide_show': hide_show})
-		}
-	)
-
+		)
+	}
+	catch(err)
+	{
+		console.log(err);
+	}
 })
 
 function authorize(req, res, next)
