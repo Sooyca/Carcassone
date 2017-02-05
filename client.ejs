@@ -95,23 +95,22 @@ div.board {
 </header>
 
 <div id="menu" class = "menu" >
-
-	<div style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
-	<img  class="przycisk" id="lewo" onclick="rotate(1)" src = "../lewo.png" height=50>
-
-	</div>
+	<div style="width: 100%">
+		<div style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
+			<img  id="lewo" onclick="rotate(1)" src = "../lewo.png">
+		</div>
+	
 		<div style="float: left; width=50%">
-	<canvas id="smallCanvas" style="margin-top: 2em"></canvas>
-	</div>
+			<canvas id="smallCanvas" style="margin-top: 2em"></canvas>
+		</div>
 
-	<div style="float: left; width=25%; margin-top: 8em; margin-left: 2em">
-		<img class="przycisk" id="prawo" onclick="rotate(-1)" src = "../prawo.png">
-
+		<div style="float: left; width=25%; margin-top: 8em; margin-left: 2em">
+			<img id="prawo" onclick="rotate(-1)" src = "../prawo.png">
+		</div>
 	</div>
-	<div class="przycisk">
+	
+	<div style = "width: 100%">
 		<img id="newGameButton" onclick="newGame()" style="display:none;" src = "../nowagra.png" width=100>
-	</div>
-	<div class="przycisk">
 		<img  onclick="endTurn()" src="../koniectury.png" width=100>
 	</div>
 	<div id="stats">
@@ -121,8 +120,8 @@ div.board {
 <script>
 	var hA = document.getElementById("menu").offsetWidth
 	var canA = document.getElementById("smallCanvas")
-	document.getElementById("lewo").width = 0.1*hA
-	document.getElementById("prawo").width = 0.1*hA
+	document.getElementById("lewo").height = 0.4*hA
+	document.getElementById("prawo").height = 0.4*hA
 	canA.height = 0.5*hA
 	canA.width = 0.5*hA
 	//canA.margin-top = 0.25*hA
