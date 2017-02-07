@@ -43,6 +43,7 @@ div.bigmenu {
 	background-image: url("./perg.png");
 	background-size: cover;
 	height: 95%;
+	text-align: center;
 	
 }
 
@@ -72,29 +73,24 @@ div.logo {
 </head>
 
 
-<body scroll = "no">
+<body scroll = "no" link="#583b27" vlink="#583b27" alink="#583b27">
 
 <div id = "cont" class="container">
 
  
 <div id="bigmenu" class = "bigmenu">
-	<div class = "menu"></div>
-	<table>
-		<% var j = 1
-		for (var i = 0; i < results.length; i++, j++)
-		{ %>
-			<% if (rooms[i] == undefined) {j--; continue} %>
-			<tr>
-			<td> <%= j %> </td>
-			<td> <%= rooms[i].name %> </td>
-			<td>
-			<% if (rooms[i].playersCnt < 6) { %>
-				<a href="rooms/<%= i %>" > Dołącz </a>
-			<% } %>
-			</td>
-			<td> Liczba graczy: <%= rooms[i].playersCnt %> </td>
-			</tr>
-	</table>
+	<div class = "menu">
+		<h1> Lista komnat</h1>
+		<a href="#" onclick="createRoom()">Otwórz własną komnatę</a>
+		<div align="center">
+			<table>
+			<tr> <td><img src="./black.png"></td> <td><img src="./blue.png"></td> <td><img src="./green.png"></td> <td><img src="./red.png"></td> <td><img src="./white.png"></td> <td><img src="./yellow.png"></td> </tr>
+				<% results.forEach(function(r) { %>
+				<tr>
+      <td>  <%= r.black_name %> </td>  <td><%= r.black_points %> </td> <td> <%= r.blue_name %> </td> <td> <%= r.blue_points %> </td> <td> <%= r.green_name %> </td> <td> <%= r.green_points %> </td> <td> <%= r.red_name %> </td> <td> <%= r.red_points %> </td> <td> <%= r.white_name %> </td> <td> <%= r.white_points %> </td> <td> <%= r.yellow_name %> </td> <td> <%= r.yellow_points %> </td> </tr>
+    <% }); %>
+			</table>
+		</div>
 	</div>
 </div>
 	<div class = "logo">
@@ -102,7 +98,7 @@ div.logo {
 	</div>
 
 <footer>
-Ala
+We do not own Carcassonne nor any of pictures used on this page. This is a students' project, from which we take no profit.
 </footer>
 
 </div>
