@@ -126,7 +126,7 @@ div.board {
 		//console.log(hA)
 	</script>
 	
-	<div id = "buttons" style = "width: 80%; margin-left:10%; margin-right:10%>
+	<div id = "buttons" style = "width: 80%; margin-left:10%; margin-right:10%">
 		<img id="newGameButton" onclick="newGame()" style="display:none;" src = "../nowagra.png" width="50%">
 		<img  onclick="endTurn()" src="../koniectury.png" width="50%">
 	</div>
