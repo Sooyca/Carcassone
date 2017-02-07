@@ -82,11 +82,11 @@ div.logo {
 	<div class = "menu">
 		<h1> Wyniki</h1>
 		<div align="center">
-			<table>
+			<table border="1">
 			<tr> <td><img src="./black.png" width=50px></td> <td><img src="./blue.png" width=50px></td> <td><img src="./green.png" width=50px></td> <td><img src="./red.png" width=50px></td> <td><img src="./white.png" width=50px></td> <td><img src="./yellow.png" width=50px></td> </tr>
 				<% results.forEach(function(r) { %>
 				<tr>
-      <td>  <%= r.black_name %> - <%= r.black_points %> </td> <td> <%= r.blue_name %> - <%= r.blue_points %> </td> <td> <%= r.green_name %> - <%= r.green_points %> </td> <td> <%= r.red_name %> - <%= r.red_points %> </td> <td> <%= r.white_name %> - <%= r.white_points %> </td> <td> <%= r.yellow_name %> - <%= r.yellow_points %> </td> </tr>
+      <td>  <%= r.black_name %> - <% if (r.black_name != "" ) { %>  <%= r.black_points %> <%}%> </td> <td> <%= r.blue_name %> - <%= r.blue_points %> </td> <td> <%= r.green_name %> - <%= r.green_points %> </td> <td> <%= r.red_name %> - <%= r.red_points %> </td> <td> <% if (r.white_name != "" ) { %>  <%= r.white_points %> <%}%> </td> <td> <%= r.yellow_name %> - <%= r.yellow_points %> </td> </tr>
     <% }); %>
 			</table>
 		</div>
