@@ -97,7 +97,7 @@ div.board {
 <div id="menu" class = "menu" >
 	<div style="width: 100%">
 		<div style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
-			<img  id="lewo" onclick="rotate(1)" src = "../lewo.png">
+			<img  id="prawo" onclick="rotate(1)" src = "../prawo.png">
 		</div>
 	
 		<div style="float: left; width=50%">
@@ -105,7 +105,7 @@ div.board {
 		</div>
 
 		<div style="float: left; width=25%; margin-top: 8em; margin-left: 2em">
-			<img id="prawo" onclick="rotate(-1)" src = "../prawo.png">
+			<img id="lewo" onclick="rotate(-1)" src = "../lewo.png">
 		</div>
 	</div>
 	
@@ -120,8 +120,8 @@ div.board {
 <script>
 	var hA = document.getElementById("menu").offsetWidth
 	var canA = document.getElementById("smallCanvas")
-	document.getElementById("lewo").height = 0.4*hA
-	document.getElementById("prawo").height = 0.4*hA
+	document.getElementById("lewo").width = 0.1*hA
+	document.getElementById("prawo").width = 0.1*hA
 	canA.height = 0.5*hA
 	canA.width = 0.5*hA
 	//canA.margin-top = 0.25*hA
