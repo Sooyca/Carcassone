@@ -61,7 +61,7 @@ div.board {
 	border: 1px solid gray;
     overflow: auto;
     height: 85%;
-    margin-right: 25%
+    margin-right: 25%;
     background-image: url("../tlo3.png");
     background-size: 100% 100%;
 }
