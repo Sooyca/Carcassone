@@ -80,27 +80,25 @@ div.logo {
  
 <div id="bigmenu" class = "bigmenu">
 	<div class = "menu">
-		<h1> Lista komnat</h1>
-		<a href="#" onclick="createRoom()">Otwórz własną komnatę</a>
-		<div align="center">
-			<table>
-				<% var j = 1
-				for (var i = 0; i < rooms.length; i++, j++)
-				{ %>
-					<% if (rooms[i] == undefined) {j--; continue} %>
-					<tr>
-					<td> <%= j %> </td>
-					<td> <%= rooms[i].name %> </td>
-					<td>
-					<% if (rooms[i].playersCnt < 6) { %>
-						<a href="rooms/<%= i %>" > Dołącz </a>
-					<% } %>
-					</td>
-					<td> Liczba graczy: <%= rooms[i].playersCnt %> </td>
-					</tr>
-				<% } %>
-			</table>
-		</div>
+	<h1> Lista komnat</h1>
+	<div align="center"> <font size="4"> <a href="#" onclick="createRoom()">Otwórz własną komnatę</a> </font> </div>
+	<table>
+		<% var j = 1
+		for (var i = 0; i < rooms.length; i++, j++)
+		{ %>
+			<% if (rooms[i] == undefined) {j--; continue} %>
+			<tr>
+			<td> <%= j %> </td>
+			<td> <%= rooms[i].name %> </td>
+			<td>
+			<% if (rooms[i].playersCnt < 6) { %>
+				<a href="rooms/<%= i %>" > Dołącz </a>
+			<% } %>
+			</td>
+			<td> Liczba graczy: <%= rooms[i].playersCnt %> </td>
+			</tr>
+		<% } %>
+	</table>
 	</div>
 </div>
 	<div class = "logo">
