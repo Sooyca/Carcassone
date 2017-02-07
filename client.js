@@ -6,8 +6,8 @@ var socket = io()
 
 var bnd = new Image()
 bnd.onload = (function() {
-	//console.log(bnd.src)
-	//ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
+	console.log(bnd.src)
+	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 })
 bnd.src = "../tlo3.png"
 
@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", function()
 	*/
 	var rect = canvas.getBoundingClientRect()
 	canvasSize = canvas.width
-	/*ctx = canvas.getContext("2d")
+	ctx = canvas.getContext("2d")
 	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
-	*/
+	
 	gridSize = canvasSize/boardSize
 	manSize = 0.4*gridSize
 	socket.emit('join', {
@@ -70,7 +70,7 @@ socket.on('id', function(data)
 socket.on('newgame', function()
 {
 	ctx.clearRect(0, 0, canvasSize, canvasSize)
-	//ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
+	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 	/*
   	window.addEventListener('click', function (e) {
 		// wyślij sygnał: getClick(e)
