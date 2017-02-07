@@ -137,7 +137,7 @@ div.board {
 
 <div class = "board">
 	<img src = "..tlo3.png" id = "bnd">
-  <canvas id="mainCanvas" style = "	background-image: url("../tlo3.png"); background-size: cover;"></canvas>
+  <canvas id="mainCanvas" ></canvas>
 </div>
 
 <script>

@@ -136,8 +136,7 @@ div.board {
 
 
 <div class = "board">
-	<img src = "..tlo3.png" id = "bnd">
-  <canvas id="mainCanvas" ></canvas>
+  <canvas id="mainCanvas" style = "	background-image: url("../tlo3.png"); background-size: cover;  background-attachment: fixed;"></canvas>
 </div>
 
 <script>
@@ -146,9 +145,6 @@ div.board {
 	can.height = 0.75*h
 	can.width = 0.75*h
 	//console.log(h)
-
-	document.getElementById("bnd").height = "100%"
-	document.getElementById("bnd").width = "100%"
 </script>
 
 <script src="../client.js"></script>
