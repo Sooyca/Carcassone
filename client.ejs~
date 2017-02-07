@@ -114,8 +114,8 @@ div.board {
 	<script>
 		var hA = document.getElementById("menu").clientWidth
 		var canA = document.getElementById("smallCanvas")
-		document.getElementById("prev").setAttribute("style", "width: 100%; height: 20%")
-		document.getElementById("prev").style.height = toString(0.6*hA)
+		document.getElementById("prev").setAttribute("style", "width: 100%; height: 30%")
+		document.getElementById("prev").style.height = 0.6*hA
 		console.log(document.getElementById("prev").style.height)
 		document.getElementById("lewo").width = 0.1*hA
 		document.getElementById("prawo").width = 0.1*hA
@@ -136,6 +136,7 @@ div.board {
 
 
 <div class = "board">
+	<img src = "..tlo3.png" id = "bnd">
   <canvas id="mainCanvas" style = "	background-image: url("../tlo3.png"); background-size: cover;"></canvas>
 </div>
 
@@ -145,6 +146,9 @@ div.board {
 	can.height = 0.75*h
 	can.width = 0.75*h
 	//console.log(h)
+
+	document.getElementById("bnd").height = "100%"
+	document.getElementById("bnd").width = "100%"
 </script>
 
 <script src="../client.js"></script>
