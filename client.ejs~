@@ -67,6 +67,7 @@ div.board {
     margin-right: 25%;
     background-image: url("../tlo3.png");
     background-size: cover;
+    background-attachment: local;
 }
 
 .przycisk {
@@ -129,14 +130,14 @@ div.board {
 		<img id="newGameButton" onclick="newGame()" style="display:none;" src = "../nowagra.png" width=100>
 		<img  onclick="endTurn()" src="../koniectury.png" width=100>
 	</div>
-	<div id="stats" style = "color: white; text-align: center; >
+	<div id="stats" style = "color: white; text-align: center; font-size: large">
 	</div>
 </div>
 
 
 
 <div class = "board">
-  <canvas id="mainCanvas" style = "	background-image: url("../tlo3.png"); background-size: cover;  background-attachment: local;"></canvas>
+  <canvas id="mainCanvas"></canvas>
 </div>
 
 <script>

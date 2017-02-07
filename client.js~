@@ -70,7 +70,7 @@ socket.on('id', function(data)
 socket.on('newgame', function()
 {
 	ctx.clearRect(0, 0, canvasSize, canvasSize)
-	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
+	//ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 	/*
   	window.addEventListener('click', function (e) {
 		// wyślij sygnał: getClick(e)

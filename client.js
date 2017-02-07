@@ -175,12 +175,12 @@ socket.on('endGame', function()
 socket.on('stats', function(data)
 {
 	console.log("tu")
-	var inner = "<table>"
+	var inner = "<table width = \"100%\">"
 	for(var i = 0; i < data.points.length; i++)
 	{
-		inner += "<tr> <td> <img width=90 height=90 src=\"" + data.colors[i] + "\"></img></td>"
-		inner += "<td>" + data.points[i] + "</td>"
-		inner += "<td>" + data.menCnt[i] + "</td></tr>"
+		inner += "<tr> <td width = \"30%\"> <img width=\"100%\" src=\"" + data.colors[i] + "\"></img></td>"
+		inner += "<td width = \"35%\">" + data.points[i] + "</td>"
+		inner += "<td width = \"35%\">" + data.menCnt[i] + "</td></tr>"
 	}
 	document.getElementById("stats").innerHTML = inner + "</table>"
 })
