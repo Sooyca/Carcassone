@@ -368,7 +368,10 @@ io.on('connection', function(socket)
 	{
 		var id = rooms[data.roomNo].playersCnt
 		socket.emit('id', id)
+		console.log("FFFFF")
 		console.log(data)
+		console.log(id)
+		console.log(rooms[data.roomNo]);
 		rooms[data.roomNo].players[socket.id] = {
 			'socket': socket,
 			'color': colors[id],

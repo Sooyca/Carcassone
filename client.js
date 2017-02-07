@@ -180,7 +180,7 @@ socket.on('stats', function(data)
 	{
 		inner += "<td width = \"10%\">"
 		if(i == data.turn)
-			inner += "<img width = \"100%\" src = \"../turn.png\">
+			inner += '<img width = \"100%\" src = \"../turn.png\">'
 		inner += "</td>"
 		inner += "<td width = \"50%\">" + data.names[i] + "</td>"
 		inner += "<tr> <td width = \"10%\"> <img width=\"100%\" src=\"" + data.colors[i] + "\"></img></td>"
