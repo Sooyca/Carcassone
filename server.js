@@ -399,7 +399,7 @@ io.on('connection', function(socket)
 			if (room.players[socket.id].id != 0)
 				return
 			room.board = []
-			room.left = []
+			//room.left = []
 			room.turn = 0
 			room.segments = [{type : field}]
 			room.randPiece = startPiece
@@ -414,7 +414,7 @@ io.on('connection', function(socket)
 				room.players[i].points = 0
 				room.players[i].mayAddMan = false
 				room.players[i].id = j
-				room.players[i].color = j
+				room.players[i].color = colors[j]
 				j++
 			}
 			room.playerCnt = j
