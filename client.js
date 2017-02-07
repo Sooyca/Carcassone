@@ -175,17 +175,17 @@ socket.on('endGame', function()
 socket.on('stats', function(data)
 {
 	console.log("tu")
-	var inner = "<table style = \"width : 30%\">"
+	var inner = "<table style = \"width : 100%\">"
 	for(var i = 0; i < data.points.length; i++)
 	{
-		inner += "<td width = \"10%\">"
+		inner += "<tr><td width = \"10%\">"
 		if(i == data.turn)
 			inner += '<img width = \"50%\" src = \"../turn.png\">'
 		inner += "</td>"
 		inner += "<td width = \"50%\">" + data.names[i] + "</td>"
-		inner += "<tr> <td width = \"10%\"> <img width=\"100%\" src=\"" + data.colors[i] + "\"></img></td>"
+		inner += "<td width = \"10%\"> <img width=\"100%\" src=\"" + data.colors[i] + "\"></img></td>"
 		inner += "<td width = \"10%\">" + data.menCnt[i] + "</td>"
-		inner += "<tr> <td width = \"10%\"> <img width=\"100%\" src=\"../star.png\"></img></td>"
+		inner += "<td width = \"10%\"> <img width=\"100%\" src=\"../star.png\"></img></td>"
 		inner += "<td width = \"10%\">" + data.points[i] + "</td></tr>"
 	}
 	document.getElementById("stats").innerHTML = inner + "</table>"
