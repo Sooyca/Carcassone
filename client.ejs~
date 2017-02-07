@@ -114,7 +114,7 @@ div.board {
 	<script>
 		var hA = document.getElementById("menu").clientWidth
 		var canA = document.getElementById("smallCanvas")
-		document.getElementById("prev").setAttribute("style", "width: 100%; height: 30%")
+		document.getElementById("prev").setAttribute("style", "width: 100%; height: 40%")
 		document.getElementById("prev").style.height = 0.6*hA
 		console.log(document.getElementById("prev").style.height)
 		document.getElementById("lewo").width = 0.1*hA
@@ -129,15 +129,14 @@ div.board {
 		<img id="newGameButton" onclick="newGame()" style="display:none;" src = "../nowagra.png" width=100>
 		<img  onclick="endTurn()" src="../koniectury.png" width=100>
 	</div>
-	<div id="stats">
+	<div id="stats" style = "color: white; text-align: center; >
 	</div>
 </div>
 
 
 
 <div class = "board">
-	<img src = "..tlo3.png" id = "bnd">
-  <canvas id="mainCanvas" ></canvas>
+  <canvas id="mainCanvas" style = "	background-image: url("../tlo3.png"); background-size: cover;  background-attachment: local;"></canvas>
 </div>
 
 <script>
@@ -146,9 +145,6 @@ div.board {
 	can.height = 0.75*h
 	can.width = 0.75*h
 	//console.log(h)
-
-	document.getElementById("bnd").height = "100%"
-	document.getElementById("bnd").width = "100%"
 </script>
 
 <script src="../client.js"></script>
