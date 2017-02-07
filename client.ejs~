@@ -111,6 +111,20 @@ div.board {
 		</div>
 	</div>
 	
+	<script>
+		var hA = document.getElementById("menu").clientWidth
+		var canA = document.getElementById("smallCanvas")
+		document.getElementById("prev").setAttribute("style", "width: 100%; height: 20%")
+		document.getElementById("prev").style.height = toString(0.6*hA)
+		console.log(document.getElementById("prev").style.height)
+		document.getElementById("lewo").width = 0.1*hA
+		document.getElementById("prawo").width = 0.1*hA
+		canA.height = 0.5*hA
+		canA.width = 0.5*hA
+		//canA.margin-top = 0.25*hA
+		//console.log(hA)
+	</script>
+	
 	<div id = "buttons" style = "width: 100%">
 		<img id="newGameButton" onclick="newGame()" style="display:none;" src = "../nowagra.png" width=100>
 		<img  onclick="endTurn()" src="../koniectury.png" width=100>
@@ -119,18 +133,7 @@ div.board {
 	</div>
 </div>
 
-<script>
-	var hA = document.getElementById("menu").clientWidth
-	var canA = document.getElementById("smallCanvas")
-	document.getElementById("prev").setAttribute("style", "width: 100%; height: 20%")
-	document.getElementById("prev").style.height = toString(0.6*hA)
-	document.getElementById("lewo").width = 0.1*hA
-	document.getElementById("prawo").width = 0.1*hA
-	canA.height = 0.5*hA
-	canA.width = 0.5*hA
-	//canA.margin-top = 0.25*hA
-	//console.log(hA)
-</script>
+
 
 <div class = "board">
   <canvas id="mainCanvas" style = "	background-image: url("../tlo3.png"); background-size: cover;"></canvas>
