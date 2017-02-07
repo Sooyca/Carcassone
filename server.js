@@ -1104,18 +1104,18 @@ function redrawPiece(room, x, y) {
 function update(room)
 {
 	var points = []
-	var colors = []
+	var mcolors = []
 	var menCnt = []
 	var names = []
 	for (var i in room.players)
 	{
 		points.push(room.players[i].points)
-		colors.push(room.players[i].color)
+		mcolors.push(room.players[i].color)
 		menCnt.push(room.players[i].pieces)
 		names.push(room.players[i].username)
 	}
 	for (var i in room.players){
-		room.players[i].socket.emit('stats', {'points': points, 'colors': colors, 'menCnt': menCnt, 'names': names, 'turn': room.turn})
+		room.players[i].socket.emit('stats', {'points': points, 'colors': mcolors, 'menCnt': menCnt, 'names': names, 'turn': room.turn})
 	}
 }
 
