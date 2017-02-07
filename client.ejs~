@@ -94,7 +94,7 @@ div.board {
 </header>
 
 <div id="menu" class = "menu" >
-	<div style="width: 100%; margin-bottom: 10%">
+	<div style="width: 100%; margin-top: 15%">
 		<div style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
 			<img  id="prawo" onclick="rotate(1)" src = "../prawo.png">
 		</div>
