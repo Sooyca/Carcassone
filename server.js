@@ -614,7 +614,7 @@ randPiece = startPiece
 function createPieces()
 {
 	var pieces = []
-/*
+
 	for(var i=0; i<4; i++) {
 		pieces.push(new createPiece(fieldAlone, fieldAlone, fieldAlone, fieldAlone, "../cloister.jpg"))
 		pieces[pieces.length-1].cloister = true
@@ -678,7 +678,7 @@ function createPieces()
 		pieces.push(new createPiece(roadStraight, fieldAlone, roadStraight, fieldAlone, "../straightRoad.jpg"))
 
 	for(var i=0; i<9; i++)
-		pieces.push(new createPiece(fieldAlone, fieldAlone, roadLeft, roadRight, "../curve.jpg"))*/
+		pieces.push(new createPiece(fieldAlone, fieldAlone, roadLeft, roadRight, "../curve.jpg"))
 	for(var i=0; i<4; i++)
 		pieces.push(new createPiece(fieldAlone, roadEnd, roadEnd, roadEnd, "../tripleCrossing.jpg"))
 
