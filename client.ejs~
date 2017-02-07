@@ -37,7 +37,7 @@ footer {
     background-color: black;
     clear: left;
     text-align: center;
-	height: 5%
+	height: 5%;
 }
 
 canvas {
@@ -57,7 +57,7 @@ div.menu {
     border: 1px solid gray;
     background-color: #583b27;
     height: 100%;
-	background-image: url("../tlo-deski.jpg")
+	background-image: url("../tlo-deski.jpg");
 }
 
 div.board {
@@ -126,7 +126,7 @@ div.board {
 		//console.log(hA)
 	</script>
 	
-	<div id = "buttons" style = "width: 100%">
+	<div id = "buttons" style = "width: 50%; margin-left:25%; margin-right:25%>
 		<img id="newGameButton" onclick="newGame()" style="display:none;" src = "../nowagra.png" width=100>
 		<img  onclick="endTurn()" src="../koniectury.png" width=100>
 	</div>
