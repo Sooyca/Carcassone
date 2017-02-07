@@ -95,15 +95,15 @@ div.board {
 
 <div id="menu" class = "menu" >
 	<div id = "prev", style="width: 100%">
-		<div style="float: left; width=25%; margin-top: 8em; margin-right: 2em; margin-left: 1em">
+		<div style="float: left; width=25%; margin-top: 10%; margin-right: 5%; margin-left: 5%">
 			<img  id="prawo" onclick="rotate(1)" src = "../prawo.png">
 		</div>
 	
 		<div style="float: left; width=50%">
-			<canvas id="smallCanvas" style="margin-top: 2em"></canvas>
+			<canvas id="smallCanvas" style="margin-top: 5%"></canvas>
 		</div>
 
-		<div style="float: left; width=25%; margin-top: 8em; margin-left: 2em">
+		<div style="float: left; width=25%; margin-top: 10%; margin-left: 5%">
 			<img id="lewo" onclick="rotate(-1)" src = "../lewo.png">
 		</div>
 	</div>
@@ -119,7 +119,7 @@ div.board {
 <script>
 	var hA = document.getElementById("menu").clientWidth
 	var canA = document.getElementById("smallCanvas")
-	document.getElementById("prev").style.height = 0.6*hA
+	document.getElementById("prev").style.height = toString(0.6*hA)
 	document.getElementById("lewo").width = 0.1*hA
 	document.getElementById("prawo").width = 0.1*hA
 	canA.height = 0.5*hA
