@@ -181,7 +181,7 @@ socket.on('stats', function(data)
 	inner += "<td width = \"10%\"></td>"
 		inner += "<tr> <td width = \"10%\"> <img width=\"100%\" src=\"" + data.colors[i] + "\"></img></td>"
 		inner += "<td width = \"10%\">" + data.menCnt[i] + "</td>"
-		inner += "<tr> <td width = \"10%\"> <img width=\"100%\" src=\"" + data.colors[i] + "\"></img></td>"
+		inner += "<tr> <td width = \"10%\"> <img width=\"100%\" src=\"../star.png\"></img></td>"
 		inner += "<td width = \"10%\">" + data.points[i] + "</td></tr>"
 	}
 	document.getElementById("stats").innerHTML = inner + "</table>"
