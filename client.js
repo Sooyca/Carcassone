@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function()
 	var rect = canvas.getBoundingClientRect()
 	canvasSize = canvas.width
 	ctx = canvas.getContext("2d")
-	ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
+	//ctx.drawImage(bnd, 0, 0, canvasSize, canvasSize)
 	
 	gridSize = canvasSize/boardSize
 	manSize = 0.4*gridSize
@@ -178,9 +178,11 @@ socket.on('stats', function(data)
 	var inner = "<table width = \"100%\">"
 	for(var i = 0; i < data.points.length; i++)
 	{
-		inner += "<tr> <td width = \"30%\"> <img width=\"100%\" src=\"" + data.colors[i] + "\"></img></td>"
-		inner += "<td width = \"35%\">" + data.points[i] + "</td>"
-		inner += "<td width = \"35%\">" + data.menCnt[i] + "</td></tr>"
+	inner += "<td width = \"10%\"></td>"
+		inner += "<tr> <td width = \"10%\"> <img width=\"100%\" src=\"" + data.colors[i] + "\"></img></td>"
+		inner += "<td width = \"10%\">" + data.menCnt[i] + "</td>"
+		inner += "<tr> <td width = \"10%\"> <img width=\"100%\" src=\"../star.png\"></img></td>"
+		inner += "<td width = \"10%\">" + data.points[i] + "</td></tr>"
 	}
 	document.getElementById("stats").innerHTML = inner + "</table>"
 })
