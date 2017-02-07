@@ -97,7 +97,7 @@ div.board {
 </header>
 
 <div id="menu" class = "menu" >
-	<div id = "prev" style="width: 100%; height: 60%">
+	<div id = "prev">
 		<div style="float: left; width=25%; margin-top: 10%; margin-right: 5%; margin-left: 5%">
 			<img  id="prawo" onclick="rotate(1)" src = "../prawo.png">
 		</div>
@@ -122,6 +122,7 @@ div.board {
 <script>
 	var hA = document.getElementById("menu").clientWidth
 	var canA = document.getElementById("smallCanvas")
+	document.getElementById("prev").setAttribute("style", "width: 100%; height: 20%")
 	document.getElementById("prev").style.height = toString(0.6*hA)
 	document.getElementById("lewo").width = 0.1*hA
 	document.getElementById("prawo").width = 0.1*hA
@@ -132,7 +133,7 @@ div.board {
 </script>
 
 <div class = "board">
-  <canvas id="mainCanvas" style = "	background-image: url("../tlo3.png"); background-size: cover;"></canvas>
+  <canvas id="mainCanvas"></canvas>
 </div>
 
 <script>
