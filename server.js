@@ -29,8 +29,9 @@ app.use(session(
 
 
 var pg = require('pg');
+var pool = new pg.Pool();
 pg.defaults.ssl = true;
-pg.connect(process.env.DATABASE_URL, function(err, client) {
+pool.connect(process.env.DATABASE_URL, function(err, client) {
 if (err) throw err;
 console.log('Connected to postgres! Getting schemas...');
 
@@ -44,7 +45,7 @@ client
 
 
 app.get('/db', function (request, response) {
-	pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+	pool.connect(process.env.DATABASE_URL, function(err, client, done) {
 	client.query('SELECT * FROM users;', function(err, result) {
 		done();
 		if (err)
@@ -75,7 +76,7 @@ app.post('/register', (req, res) => {
 				{
 					
 								
-									pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+									pool.connect(process.env.DATABASE_URL, function(err, client, done) {
 										client.query("INSERT INTO users (name, password) VALUES ($1, $2);", [dane.nazwa, hash(dane.haslo)], function(err, result) {
 												done();
 												if (err)
